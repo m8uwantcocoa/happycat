@@ -1,0 +1,178 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Supabase direct connection (see step 3)
+}
+
+// ---- Enums ----
+enum Species {
+  ABYSSINIAN
+    AMERICAN_SHORTHAIR
+    AMERICAN_CURL
+    AMERICAN_BOBTAIL
+    BALINESE
+    BENGAL
+    BIRMAN
+    BRITISH_SHORTHAIR
+    BURMESE
+    CHARTREUX
+    CORNISH_REX
+    DEVON_REX
+    EGYPTIAN_MAU
+    HIMALAYAN
+    JAPANESE_BOBTAIL
+    KORAT
+    MAINE_COON
+    MANX
+    NORWEGIAN_FOREST
+    OCICAT
+    ORIENTAL
+    PERSIAN
+    RAGDOLL
+    RUSSIAN_BLUE
+    SAVANNAH
+    SCOTTISH_FOLD
+    SIAMESE
+    SIBERIAN
+    SOMALI
+    SPHYNX
+}
+
+enum Sex {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum CareType {
+  FEED
+  NAILS
+  VACCINE
+  LITTER
+  WATER
+  BRUSH
+  TREAT
+  PLAY
+}
+
+// ---- Models ----
+// Mirrors auth.users (UUID). We don't let Prisma manage auth schema.
+// Option A: Add a FOREIGN KEY to auth.users.id later in SQL (optional).
+model Profile {
+  id        String  @id @db.Uuid // same as auth.users.id
+  locale    String? // e.g., "sv-SE"
+  tz        String? // IANA TZ like "Europe/Stockholm"
+  createdAt DateTime @default(now())
+  pets      Pet[]
+  uiCopy    UICopy?
+  nudges    Nudge[]
+}
+
+// A pet belongs to one user (Profile)
+model Pet {
+  id         String   @id @default(cuid())
+  userId     String   @db.Uuid
+  name       String
+  species    Species
+  breed      String?
+  sex        Sex      @default(UNKNOWN)
+  birthdate  DateTime?
+  weightKg   Decimal? @db.Decimal(5,2)
+  neutered   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carePlans  CarePlan[]
+  careLogs   CareLog[]
+  moodLogs   MoodLog[]
+  vaccines   Vaccine[]
+
+  @@index([userId])
+}
+
+// What to do & how often
+model CarePlan {
+  id           String   @id @default(cuid())
+  petId        String
+  type         CareType
+  // cadence: flexible fields for scheduling
+  timesPerDay  Int?      // e.g., 2 for feeding
+  everyNDays   Int?      // e.g., 14 for deworm
+  everyNWeeks  Int?
+  nextDueAt    DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  pet          Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, type])
+}
+
+// Actual log entries
+model CareLog {
+  id         String    @id @default(cuid())
+  petId      String
+  type       CareType
+  at         DateTime  @default(now())
+  amountG    Int?      // grams for feeding, optional
+  note       String?
+
+  pet        Pet       @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, type, at])
+}
+
+// Optional: named vaccine plans (if you want per-vaccine names)
+model Vaccine {
+  id        String   @id @default(cuid())
+  petId     String
+  name      String   // e.g., "FVRCP", "Rabies"
+  dueDate   DateTime?
+  doneDate  DateTime?
+
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, name])
+}
+
+model MoodLog {
+  id        String   @id @default(cuid())
+  petId     String
+  date      DateTime // store date-only at midnight if you prefer
+  score     Int      // 1–5
+  note      String?
+
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, date]) // one per day per pet
+  @@index([petId, date])
+}
+
+// Cached AI copy pack per user (Consistency & Standards)
+model UICopy {
+  userId     String   @id @db.Uuid
+  json       Json
+  updatedAt  DateTime @updatedAt
+
+  user       Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Optional: store nudges shown/applied (Flexibility & Efficiency)
+model Nudge {
+  id        String   @id @default(cuid())
+  userId    String   @db.Uuid
+  title     String
+  reason    String?
+  payload   Json      // the action suggestion
+  applied   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}

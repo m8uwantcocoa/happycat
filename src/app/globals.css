@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* ...existing CSS... */
+
+@keyframes walkRight {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes walkLeft {
+  0% { transform: translateX(calc(100vw + 100px)); }
+  100% { transform: translateX(-100px); }
+}
+
+.cat-walk-right {
+  animation: walkRight 15s linear infinite;
+}
+
+.cat-walk-left {
+  animation: walkLeft 20s linear infinite;
+  animation-delay: 7s;
+  transform: scaleX(-1); /* Vänd katten så den ser åt vänster */
+}
