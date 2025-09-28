@@ -13,6 +13,7 @@ function getSpeciesImage(species: string): string {
   return imageMap[species] || '/ragdoll.png' // Default to ragdoll if species not found
 }
 
+
 export default async function Dashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

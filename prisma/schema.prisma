@@ -91,6 +91,7 @@ model Pet {
   careLogs   CareLog[]
   moodLogs   MoodLog[]
   vaccines   Vaccine[]
+  
 
   @@index([userId])
 }

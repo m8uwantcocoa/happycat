@@ -15,44 +15,54 @@ export default function AddPet() {
   const [neutered, setNeutered] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [feedingTime,setFeedingTime] = useState('')
+  const [feedingFrequency,setFeedingFrequency] = useState('')
+  const [litterChangeTime,setLitterChangeTime] = useState('')
+  const [brushFrequencyPerWeek,setBrushFrequencyPerWeek] = useState('')
+
   
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
+  e.preventDefault()
+  setLoading(true)
+  setMessage('')
 
-    try {
-      const response = await fetch('/api/pets', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          species,
-          breed: breed || undefined,
-          sex,
-          birthdate: birthdate ? new Date(birthdate) : undefined,
-          weightKg: weightKg ? parseFloat(weightKg) : undefined,
-          neutered,
-        }),
-      })
+  try {
+    const response = await fetch('/api/pets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        species,
+        breed: breed || undefined,
+        sex,
+        birthdate: birthdate ? new Date(birthdate) : undefined,
+        weightKg: weightKg ? parseFloat(weightKg) : undefined,
+        neutered,
+        feedingTime,
+        feedingFrequency,
+        litterChangeTime,
+        brushFrequencyPerWeek,
+      }),
+    })
 
-      if (response.ok) {
-        router.push('/dashboard')
-      } else {
-        const errorData = await response.json()
-        setMessage(errorData.error || 'Failed to add pet')
-      }
-    } catch (error) {
-      console.error('Error adding pet:', error)
-      setMessage('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+    if (response.ok) {
+      router.push('/dashboard')
+    } else {
+      const errorData = await response.json()
+      setMessage(errorData.error || 'Failed to add pet')
     }
+  } catch (error) {
+    console.error('Error adding pet:', error)
+    setMessage('Something went wrong. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
@@ -88,6 +98,63 @@ export default function AddPet() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+            <div>
+              <label htmlFor="feedingTime" className="block text-sm font-medium text-gray-700 mb-2">
+                Feeding Time *
+              </label>
+              <input
+                type="number"
+                id="feedingTime"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., 11:00"
+                value={feedingTime}
+                onChange={(e) => setFeedingTime(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="litterChangeTime" className="block text-sm font-medium text-gray-700 mb-2">
+                Litter Change Time *
+              </label>
+              <input
+                type="number"
+                id="litterChangeTime"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., 20:00"
+                value={litterChangeTime}
+                onChange={(e) => setLitterChangeTime(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="feedingFrequency" className="block text-sm font-medium text-gray-700 mb-2">
+                Feeding Frequency *
+              </label>
+              <input
+                type="number"
+                id="feedingFrequency"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., 1"
+                value={feedingFrequency}
+                onChange={(e) => setFeedingFrequency(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="brushFrequency" className="block text-sm font-medium text-gray-700 mb-2">
+                Brush Frequency (per week) *
+              </label>
+              <input
+                type="number"
+                id="brushFrequency"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., 3"
+                value={brushFrequencyPerWeek}
+                onChange={(e) => setBrushFrequencyPerWeek(e.target.value)}
+              />
+            </div>
+
 
             <div>
   <label htmlFor="species" className="block text-sm font-medium text-gray-700 mb-2">

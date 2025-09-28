@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import type { Pet, CreatePetData } from '@/types/pet'
 import { Species, Sex } from '@prisma/client'
 
+// Remove the duplicate import of prisma and CareType since you're not using CareType in this file
+
 // Create or get user profile
 async function ensureUserProfile(userId: string) {
   try {

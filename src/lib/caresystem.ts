@@ -1,119 +1,99 @@
 import { prisma } from './prisma'
 import { CareType, CareLog } from '@prisma/client'
 
-// Care requirements using your existing enum values
-export const CARE_REQUIREMENTS = {
-  [CareType.FEED]: { intervalHours: 6, maxPerDay: 2 },
-  [CareType.WATER]: { intervalHours: 24, maxPerDay: 1 },
-  [CareType.NAILS]: { intervalDays: 7, maxPerDay: 1 },
-  [CareType.LITTER]: { intervalHours: 8, maxPerDay: 1 },
-  [CareType.BRUSH]: { intervalDays: 2, maxPerDay: 1 },
-  [CareType.VACCINE]: { intervalDays: 365, maxPerDay: 1 },
-  [CareType.TREAT]: { maxPerDay: 5 },
-  [CareType.PLAY]: { maxPerDay: 2, minPerDay: 1 }
-}
-
-// Get pet's recent care logs to determine what they need
 export async function getPetCareStatus(petId: string) {
   const now = new Date()
+  
+  // Different time periods for different care types
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
 
-  // Get recent care logs
+  // Get logs for different time periods
   const recentLogs = await prisma.careLog.findMany({
     where: {
       petId,
-      at: { gte: weekAgo }
+      at: { gte: yearAgo } // Get logs from past year
     },
     orderBy: { at: 'desc' }
   })
 
-  // Get today's logs for daily counters
-  const todayLogs = recentLogs.filter((log: CareLog) => 
-    log.at >= today
-  )
+  // Filter logs by time periods
+  const todayLogs = recentLogs.filter(log => log.at >= today)
+  const weekLogs = recentLogs.filter(log => log.at >= weekAgo)
+  const monthLogs = recentLogs.filter(log => log.at >= monthAgo)
+  const yearLogs = recentLogs.filter(log => log.at >= yearAgo)
 
-  // Get latest mood log
-  const latestMood = await prisma.moodLog.findFirst({
-    where: { petId },
-    orderBy: { date: 'desc' }
-  })
+  // Calculate mood based on care frequency
+  let mood = 3 // Base mood
+  
+  // Daily care affects mood more
+  const todayFeed = todayLogs.filter(log => log.type === 'FEED').length
+  const todayWater = todayLogs.filter(log => log.type === 'WATER').length
+  const todayPlay = todayLogs.filter(log => log.type === 'PLAY').length
+  
+  if (todayFeed === 0) mood -= 2
+  else if (todayFeed === 1) mood -= 1
+  else if (todayFeed >= 2) mood += 1
+  
+  if (todayWater === 0) mood -= 1
+  if (todayPlay === 0) mood -= 1
+  else if (todayPlay >= 2) mood += 1
+
+  mood = Math.max(1, Math.min(5, mood))
 
   return {
-    recentLogs,
+    currentMood: mood,
     todayLogs,
-    currentMood: latestMood?.score || 3 // default mood 3/5
+    weekLogs,
+    monthLogs,
+    yearLogs,
+    recentLogs
   }
 }
 
-// Check what care the pet needs right now
 export function analyzeCareNeeds(careStatus: any) {
-  const now = new Date()
-  const { recentLogs, todayLogs } = careStatus
+  const { todayLogs, weekLogs, monthLogs, yearLogs } = careStatus
   
-  const needs: Partial<Record<CareType, boolean>> = {}
-  const counts: Partial<Record<CareType, number>> = {}
+  // Count different time periods
+  const todayCount = (type: CareType) => todayLogs.filter((log: CareLog) => log.type === type).length
+  const weekCount = (type: CareType) => weekLogs.filter((log: CareLog) => log.type === type).length
+  const monthCount = (type: CareType) => monthLogs.filter((log: CareLog) => log.type === type).length
+  const yearCount = (type: CareType) => yearLogs.filter((log: CareLog) => log.type === type).length
 
-  // Count today's activities - using actual enum values
-  const careTypes = Object.values(CareType)
-  
-  careTypes.forEach((careType: CareType) => {
-    counts[careType] = todayLogs.filter((log: CareLog) => log.type === careType).length
-  })
+  const counts = {
+    // Daily counts
+    FEED: todayCount('FEED'),
+    WATER: todayCount('WATER'),
+    TREAT: todayCount('TREAT'),
+    PLAY: todayCount('PLAY'),
+    LITTER: todayCount('LITTER'),
+    
+    // Weekly/monthly/yearly counts
+    NAILS: weekCount('NAILS'),      // Per week
+    BRUSH: Math.floor(monthCount('BRUSH') / 2), // Every 2 weeks
+    VACCINE: yearCount('VACCINE'),  // Per year
+  }
 
-  // Check feeding (every 6 hours, max 2 per day)
-  const lastFeed = recentLogs.find((log: CareLog) => log.type === CareType.FEED)
-  const hoursSinceLastFeed = lastFeed 
-    ? (now.getTime() - lastFeed.at.getTime()) / (1000 * 60 * 60)
-    : 999
+  const needs = {
+    // Daily needs
+    FEED: counts.FEED < 2,
+    WATER: counts.WATER < 1,
+    PLAY: counts.PLAY < 1,
+    LITTER: counts.LITTER < 1,
+    
+    // Periodic needs
+    NAILS: counts.NAILS === 0,      // Need nails if none this week
+    BRUSH: monthCount('BRUSH') === 0, // Need brush if none this month
+    VACCINE: counts.VACCINE === 0,  // Need vaccine if none this year
+    
+    // Treats are optional
+    TREAT: false
+  }
 
-  needs[CareType.FEED] = hoursSinceLastFeed >= 6 && (counts[CareType.FEED] || 0) < 2
-
-  // Check water (daily)
-  needs[CareType.WATER] = (counts[CareType.WATER] || 0) < 1
-
-  // Check litter (can be done multiple times per day)
-  const lastLitter = recentLogs.find((log: CareLog) => log.type === CareType.LITTER)
-  const hoursSinceLastLitter = lastLitter
-    ? (now.getTime() - lastLitter.at.getTime()) / (1000 * 60 * 60)
-    : 999
-  
-  needs[CareType.LITTER] = hoursSinceLastLitter >= 8
-
-  // Check nails (weekly)
-  const lastNails = recentLogs.find((log: CareLog) => log.type === CareType.NAILS)
-  const daysSinceLastNails = lastNails
-    ? (now.getTime() - lastNails.at.getTime()) / (1000 * 60 * 60 * 24)
-    : 999
-
-  needs[CareType.NAILS] = daysSinceLastNails >= 7
-
-  // Check brushing (every 2 days)
-  const lastBrush = recentLogs.find((log: CareLog) => log.type === CareType.BRUSH)
-  const daysSinceLastBrush = lastBrush
-    ? (now.getTime() - lastBrush.at.getTime()) / (1000 * 60 * 60 * 24)
-    : 999
-
-  needs[CareType.BRUSH] = daysSinceLastBrush >= 2
-
-  // Check vaccine (yearly)
-  const lastVaccine = recentLogs.find((log: CareLog) => log.type === CareType.VACCINE)
-  const daysSinceLastVaccine = lastVaccine
-    ? (now.getTime() - lastVaccine.at.getTime()) / (1000 * 60 * 60 * 24)
-    : 999
-
-  needs[CareType.VACCINE] = daysSinceLastVaccine >= 365
-
-  // Check treats (max 5 per day)
-  needs[CareType.TREAT] = (counts[CareType.TREAT] || 0) < 5
-
-  // Check play (1-2 times per day)
-  needs[CareType.PLAY] = (counts[CareType.PLAY] || 0) < 2
-
-  return { needs, counts }
+  return { counts, needs }
 }
-
-// Perform care activity using your existing CareLog model
 export async function performCareActivity(petId: string, careType: CareType, amountG?: number, note?: string) {
   const now = new Date()
   

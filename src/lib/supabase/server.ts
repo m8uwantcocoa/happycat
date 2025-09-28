@@ -12,6 +12,29 @@ export async function createClient() {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
+        set() {
+          // No-op for server components
+        },
+        remove() {
+          // No-op for server components
+        },
+      },
+    }
+  )
+}
+
+// For Server Actions and Route Handlers where you need to modify cookies
+export async function createClientWithCookieAccess() {
+  const cookieStore = await cookies()
+  
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
         set(name: string, value: string, options: CookieOptions) {
           cookieStore.set({ name, value, ...options })
         },
