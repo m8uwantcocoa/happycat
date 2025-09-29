@@ -91,6 +91,8 @@ model Pet {
   careLogs   CareLog[]
   moodLogs   MoodLog[]
   vaccines   Vaccine[]
+  feedingTime       Int?    // Amount of times fed per day
+  feedingFrequency  Int?    // Hours between feeding
   
 
   @@index([userId])

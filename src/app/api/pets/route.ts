@@ -13,21 +13,25 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, species, breed, sex, birthdate, weightKg, neutered } = body
+    const { name, species, breed, sex, birthdate, weightKg, neutered,feedingFrequency,feedingTime } = body
 
     if (!name || !species) {
       return NextResponse.json({ error: 'Pet name and species are required' }, { status: 400 })
     }
+    
+    
 
     const pet = await createPet(user.id, {
-  name,
-  species,
-  breed,
-  sex: sex || Sex.UNKNOWN,
-  birthdate: birthdate ? new Date(birthdate) : undefined,
-  weightKg,
-  neutered: neutered || false,
-}) // Remove the user.email parameter
+      name,
+      species,
+      breed,
+      sex: sex || Sex.UNKNOWN,
+      birthdate: birthdate ? new Date(birthdate) : undefined,
+      weightKg,
+      neutered: neutered || false,
+        feedingTime: feedingTime ? parseInt(feedingTime) : undefined,
+  feedingFrequency: feedingFrequency ? parseInt(feedingFrequency) : undefined
+    }) 
 
     if (!pet) {
       return NextResponse.json({ error: 'Failed to create pet' }, { status: 500 })

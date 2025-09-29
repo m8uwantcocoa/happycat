@@ -22,4 +22,6 @@ export interface CreatePetData {
   birthdate?: Date
   weightKg?: number
   neutered?: boolean
+  feedingFrequency?: number
+  feedingTime?: number
 }

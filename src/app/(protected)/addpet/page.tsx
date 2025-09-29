@@ -98,62 +98,36 @@ export default function AddPet() {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div>
+             <div>
               <label htmlFor="feedingTime" className="block text-sm font-medium text-gray-700 mb-2">
-                Feeding Time *
+                Amount of times fed per day
               </label>
               <input
                 type="number"
                 id="feedingTime"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., 11:00"
+                placeholder="e.g., 1"
                 value={feedingTime}
                 onChange={(e) => setFeedingTime(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="litterChangeTime" className="block text-sm font-medium text-gray-700 mb-2">
-                Litter Change Time *
-              </label>
-              <input
-                type="number"
-                id="litterChangeTime"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., 20:00"
-                value={litterChangeTime}
-                onChange={(e) => setLitterChangeTime(e.target.value)}
-              />
-            </div>
-            <div>
               <label htmlFor="feedingFrequency" className="block text-sm font-medium text-gray-700 mb-2">
-                Feeding Frequency *
+                Time between feeding (in hours)
               </label>
               <input
                 type="number"
                 id="feedingFrequency"
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., 1"
+                placeholder="e.g., 5"
                 value={feedingFrequency}
                 onChange={(e) => setFeedingFrequency(e.target.value)}
               />
             </div>
-            <div>
-              <label htmlFor="brushFrequency" className="block text-sm font-medium text-gray-700 mb-2">
-                Brush Frequency (per week) *
-              </label>
-              <input
-                type="number"
-                id="brushFrequency"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="e.g., 3"
-                value={brushFrequencyPerWeek}
-                onChange={(e) => setBrushFrequencyPerWeek(e.target.value)}
-              />
-            </div>
+           
+            
 
 
             <div>

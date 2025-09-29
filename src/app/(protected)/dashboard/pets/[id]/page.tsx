@@ -159,6 +159,7 @@ export default async function PetDetailPage({ params }: PageProps) {
                       petName={pet.name}
                       careStatus={careStatus}
                       careNeeds={careNeeds}
+                      pet={pet}
                   />
           {/* Action buttons */}
           
