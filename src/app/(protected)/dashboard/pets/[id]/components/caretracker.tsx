@@ -138,10 +138,10 @@ export default function CareTracker({ petId, petName, careStatus, careNeeds,pet 
         setMessage(result.message)
         setLoading('Fantastic! You’ve cared for your virtual pet. Don’t forget to do it in real life too!😸 One-minute break…');
 
-        await wait(60000);
+        await wait(6000);
 
         // Keep spinner active until reload
-        
+        window.location.reload()
       } else {
         setMessage(`Error: ${result.error}`)
         setLoading(null) // reset only on error
@@ -379,28 +379,34 @@ const getRandomFact = () => {
       </div>
 
       
-      {loading && (
-  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-linear-to-t from-blue-300 to-green-300 bg-opacity-25">
-    <div className="relative flex flex-col items-center justify-center space-y-4">
-      {/* Spinner */}
-      <div className="absolute w-32 h-32 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-      
-      {/* Emoji */}
-      <span className="text-7xl animate-bounce pt-45 z-10">🐱</span>
-      
-      {/* Main loading text */}
-      <p className="text-center text-lg font-semibold z-10 text-gray-900 mt-36">
-        Fantastic! You’ve cared for your virtual pet. Don’t forget to do it in real life too! <br />
-        😸 One-minute break… 
-      </p>
-    </div>
-
-    {/* Random cat fact längst ner */}
-    <div className="fixed bottom-4 w-full text-center font-bold italic text-m text-gray-700 z-10 ">
-      Did you know: "{getRandomFact()}"
-    </div>
+      <div
+  className={`fixed inset-0 z-50 flex flex-col items-center justify-center 
+              bg-gradient-to-t from-blue-300 to-green-300 bg-opacity-25
+              transition-all duration-500 ease-in-out
+              ${loading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+>
+  <div className={`relative flex flex-col items-center justify-center space-y-4
+                  transform transition-transform duration-500 ease-in-out
+                  ${loading ? 'scale-100' : 'scale-95'}`}>
+    {/* Spinner */}
+    <div className="absolute w-32 h-32 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    
+    {/* Emoji */}
+    <span className="text-7xl animate-bounce z-10">🐱</span>
+    
+    {/* Main loading text */}
+    <p className="text-center text-lg font-semibold z-10 text-gray-900 mt-36">
+      Fantastic! You’ve cared for your virtual pet. Don’t forget to do it in real life too! <br />
+      😸 One-minute break… 
+    </p>
   </div>
-)}
+
+  {/* Random cat fact at the bottom */}
+  <div className="fixed bottom-4 w-full text-center font-bold italic text-m text-gray-700 z-10 ">
+    Did you know: "{getRandomFact()}"
+  </div>
+</div>
+
 
 
 
