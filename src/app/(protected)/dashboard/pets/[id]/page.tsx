@@ -66,14 +66,25 @@ export default async function PetDetailPage({ params }: PageProps) {
       <div className="max-w-2xl mx-auto pt-2">
         <div className="bg-white rounded-xl shadow-lg p-8">
           {/* Back button */}
-          <div className="mb-6">
+          <div className="mb-6 flex justify-between items-center">
             <Link 
               href="/dashboard"
-              className="text-blue-600 hover:text-blue-800 mb-4 inline-block"
+              className="font-bold  text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
             >
-              ← Back to Dashboard
+              ← Back
             </Link>
+            <button
+              className="font-bold  text-sm bg-gray-400 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded"
+            >
+              Edit
+            </button>
+            <button
+              className="font-bold  text-sm bg-red-400 hover:bg-red-300 text-red-700 font-bold py-2 px-4 border-b-4 border-red-600 hover:border-red-400 rounded"
+            >
+              Delete Pet
+            </button>
           </div>
+          
 
           {/* Pet header with image */}
           <div className="text-center mb-8">

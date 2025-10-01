@@ -47,7 +47,7 @@ const handleKeyPress = (e: React.KeyboardEvent) => {
         <div className="backdrop-blur-md bg-gradient-to-br from-orange-100/90 via-pink-50/80 to-green-100/90 rounded-xl shadow-2xl p-8 border border-white/30">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Sign in to your account
+              Sign in
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
               Or{' '}

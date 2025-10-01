@@ -43,7 +43,7 @@ export default async function Dashboard() {
             </div>
             <Link 
               href="/auth/signout" 
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              className="hover:animate-pulse focus:animate-ping inline-block px-4 py-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
             >
               Logout
             </Link>
