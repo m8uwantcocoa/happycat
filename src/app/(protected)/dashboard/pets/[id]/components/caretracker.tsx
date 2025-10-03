@@ -136,7 +136,7 @@ export default function CareTracker({ petId, petName, careStatus, careNeeds,pet 
 
       if (response.ok) {
         setMessage(result.message)
-        setLoading('Fantastic! You’ve cared for your virtual pet. Don’t forget to do it in real life too!😸 One-minute break…');
+        setLoading('Fantastic! You’ve cared for your virtual pet. Don’t forget to do it in real life too! One-minute break…');
 
         await wait(6000);
 
@@ -244,7 +244,17 @@ const getRandomFact = () => {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Care Tracking</h2>
+      <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Care Tracking</h2>
+
+      <button 
+        onClick={() => alert('Take care of your pet by providing food, water, playtime, and grooming. Regular care helps keep your feline friend happy and healthy!')}
+        className="text-blue-600 hover:text-blue-800 hover: ml-97 hover:bg-blue-50 rounded-full p-1 transition-colors cursor-pointer"
+        title="Information about care tracking"
+      >
+        ℹ️
+      </button>
+    </div>
       <p className="text-gray-600 mb-2">
         Take care of {petName}'s well-being. Your feline friend depends on you!
       </p>

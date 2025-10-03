@@ -35,7 +35,7 @@ export default async function Dashboard() {
             
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Welcome! 🐱
+                Welcome! 
               </h1>
               <p className="text-gray-600 mt-2">
                 Hello {user.email}
@@ -59,7 +59,7 @@ export default async function Dashboard() {
                   href="/addpet"
                   className="px-6 py-2 bg-blue-500 hover:animte-pulse focus:animate-ping hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
                 >
-                  Add Cat 🐈‍⬛
+                  Add Cat 
                 </Link>
               </div>
               
@@ -114,7 +114,7 @@ export default async function Dashboard() {
                 href="/addpet/"
                 className="inline-block px-8 py-3 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
               >
-                Add Your First Pet 🐈‍⬛
+                Add Your First Pet 
               </Link>
             </div>
           )}
