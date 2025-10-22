@@ -45,6 +45,12 @@ export default function SignUp() {
       
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="backdrop-blur-md bg-gradient-to-br from-orange-100/90 via-pink-50/80 to-yellow-100/90 rounded-xl shadow-2xl p-8 border border-white/30">
+          <Link 
+                href="/"
+                className="font-bold  text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
+            >
+              ← Back
+            </Link>
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Sign up
@@ -122,12 +128,7 @@ export default function SignUp() {
             </div>
 
             <div className="text-left ">
-              <Link 
-                href="/"
-                className="text-lg font-bold text-blue-600 hover:text-blue-500"
-              >
-                ← Back 
-              </Link>
+              
             </div>
           </form>
         </div>

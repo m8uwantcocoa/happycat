@@ -258,19 +258,19 @@ const getRandomFact = () => {
 
       {/* Care Info Modal */}
       {showCareInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
           <div className="bg-white rounded-xl max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
-              <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold text-gray-900">🐱 Pet Care Guide</h2>
-                <button 
-                  onClick={() => setShowCareInfo(false)}
-                  className="text-gray-500 hover:text-gray-700 text-3xl font-bold hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-gray-900">🐱 Cat Care Guide</h2>
+          <button 
+            onClick={() => setShowCareInfo(false)}
+            className="text-gray-500 hover:text-gray-700 text-3xl font-bold hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+          >
+            ×
+          </button>
+        </div>
+      </div>
             
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

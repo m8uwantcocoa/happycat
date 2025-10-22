@@ -53,7 +53,7 @@ export default async function Dashboard() {
             <div>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold text-gray-800">
-                  Your Pets ({pets.length})
+                  Your Cats ({pets.length})
                 </h2>
                 <Link 
                   href="/addpet"
@@ -95,7 +95,7 @@ export default async function Dashboard() {
                       href={`/dashboard/pets/${pet.id}`}
                       className="mt-4 hover:animate-pulse focus:animate-ping inline-block px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
                     >
-                      Select pet
+                      Select Cat
                     </Link>
                   </div>
                 ))}

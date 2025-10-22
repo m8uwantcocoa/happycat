@@ -112,7 +112,7 @@ const validateFeedingTime = (input: HTMLInputElement) => {
               ← Back
             </Link>
             <h1 className="text-3xl pt-5 font-bold text-gray-900">
-              Add a New Pet 🐱
+              Add a New Cat 🐱
             </h1>
             <p className="text-gray-600 mt-2">
               Tell us about your furry friend!
@@ -280,7 +280,7 @@ const validateFeedingTime = (input: HTMLInputElement) => {
                 disabled={loading}
                 className="flex-1 py-3 px-6 text-lg bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Adding Pet...' : 'Add Pet 🐾'}
+                {loading ? 'Adding Cat...' : 'Add Cat 🐾'}
               </button>
               
               <Link 

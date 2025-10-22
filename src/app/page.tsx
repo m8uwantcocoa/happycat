@@ -47,7 +47,7 @@ export default async function Home() {
             <div className="space-y-2">
               <Link
                 href="/login"
-                className="group relative w-full flex justify-center py-2 px-4 border border-blue-500 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-500 hover:bg-gray-50 hover:animate-pulse focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+className="group relative w-full flex justify-center font-bold text-sm text-white bg-gradient-to-r from-blue-600 via-blue-500 to-blue-500 py-2 px-4 rounded-md border-b-4 border-blue-800 shadow-sm hover:brightness-110 hover:border-blue-600 active:translate-y-[2px] transition-all duration-150"
               >
                 <span className="transition-opacity font-bold text-white duration-300 group-hover:opacity-0">Sign In 🐈</span>
                 <span className="absolute inset-0 flex items-center font-bold text-white justify-center transition-opacity duration-300 opacity-0 group-hover:opacity-100">Welcome back 🐾</span>
@@ -55,14 +55,14 @@ export default async function Home() {
               </Link>
               <Link
                 href="/signup"
-                className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:animate-pulse focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+className="group relative w-full flex justify-center font-bold text-sm text-gray-700 bg-gradient-to-b from-gray-100 to-gray-200 py-2 px-4 rounded-md border-b-4 border-gray-400 shadow-sm hover:brightness-110 hover:border-gray-300 active:translate-y-[2px] transition-all duration-150"
               >
                 <span className="transition-opacity font-bold duration-300 group-hover:opacity-0">Sign Up 🐈‍⬛</span>
                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 font-bold group-hover:opacity-100">Sign Up ... It's free!</span>
               </Link>
               <Link
                 href="/info"
-                className="w-full  flex justify-center bg-gradient-to-l from-green-300 via-green-400 to-green-300 py-2 px-4 border border-green-500 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:animate-pulse focus:outline-none focus:ring-2  focus:ring-offset-2 focus:ring-blue-500"
+className="w-full flex justify-center font-bold text-sm text-white bg-gradient-to-l from-green-300 via-green-400 to-green-300 py-2 px-4 rounded-md border-b-4 border-green-600 shadow-sm hover:brightness-110 hover:border-green-400 active:translate-y-[2px] transition-all duration-150"
               >
                 <span className="font-bold text-green-800">What is HappyCat? ℹ️</span>
               </Link>

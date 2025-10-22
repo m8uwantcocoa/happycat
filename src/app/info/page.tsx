@@ -53,10 +53,10 @@ export default function LoginPage() {
           <div className="text-center ">
               <Link 
                 href="/"
-                className="text-lg pr-39 font-bold text-blue-600 hover:text-blue-400"
-              >
-                ← Back 
-              </Link>
+                className="font-bold  text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
+            >
+              ← Back
+            </Link>
               
               <Link 
                 href="/"

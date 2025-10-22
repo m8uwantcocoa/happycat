@@ -151,7 +151,7 @@ export default async function PetDetailPage({ params }: PageProps) {
             <button
               className="font-bold  text-sm bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 border-b-4 border-red-600 hover:border-red-400 rounded"
             >
-              Delete Pet
+              Delete Cat
             </button>
           </div>
           
