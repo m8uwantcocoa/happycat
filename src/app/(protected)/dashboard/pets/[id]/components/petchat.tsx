@@ -63,9 +63,9 @@ export default function PetChat({ petName, petSpecies, pet }: PetChatProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 mb-6 shadow-lg">
+    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        💬 Ask about {petName}
+        Ask about {petName}
       </h2>
       
       {error && (

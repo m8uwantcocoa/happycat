@@ -5,183 +5,140 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPetCareStatus, analyzeCareNeeds } from '@/lib/caresystem'
 import CareTracker from './components/caretracker'
-import PetChat from './components/petchat'
+import ChatButton from './components/chatbutton'
 
-
-// Helper function for pet image
+// helper: get cat image
 function getSpeciesImage(species: string): string {
   const imageMap: { [key: string]: string } = {
-    'RAGDOLL': '/ragdoll.png',
-    'SIAMESE': '/siamese.png',
-    'BRITISH_SHORTHAIR': '/britishshort.png',
-    'PERSIAN': '/persian.png'
+    RAGDOLL: '/ragdoll.png',
+    SIAMESE: '/siamese.png',
+    BRITISH_SHORTHAIR: '/britishshort.png',
+    PERSIAN: '/persian.png',
   }
-  
   return imageMap[species] || '/ragdoll.png'
 }
 
 interface PageProps {
-  params: {
-    id: string
-  }
+  params: { id: string }
 }
 
-// Updated function that considers button availability
+// helper: urgent need
 function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
   const needs = careNeeds.needs || {}
   const counts = careNeeds.counts || {}
-  
-  // Check if FEED is needed AND button is clickable
+
   if (needs.FEED) {
-    const lastFeedLog = careStatus?.todayLogs?.filter((log: any) => log.type === 'FEED')
+    const lastFeedLog = careStatus?.todayLogs
+      ?.filter((log: any) => log.type === 'FEED')
       .sort((a: any, b: any) => new Date(b.at).getTime() - new Date(a.at).getTime())[0]
-    
+
     let canFeed = true
-    
-    // Check if enough time has passed since last feeding
     if (lastFeedLog) {
       const lastFeedTimeFromDB = new Date(lastFeedLog.at).getTime()
       const nextFeedTime = lastFeedTimeFromDB + pet.feedingFrequency * 60 * 60 * 1000
-      
-      if (Date.now() < nextFeedTime) {
-        canFeed = false
-      }
+      if (Date.now() < nextFeedTime) canFeed = false
     }
-    
-    // Check if daily limit reached
-    if ((counts.FEED || 0) >= pet.feedingTime) {
-      canFeed = false
-    }
-    
-    if (canFeed) {
-      return { emoji: '🍽️', text: 'HUNGRY!', color: 'bg-red-100' }
-    }
+    if ((counts.FEED || 0) >= pet.feedingTime) canFeed = false
+    if (canFeed) return { emoji: '🍽️', text: 'HUNGRY!', color: 'bg-red-100' }
   }
-  
-  // Check WATER
-  if (needs.WATER && (counts.WATER || 0) < 1) {
+
+  if (needs.WATER && (counts.WATER || 0) < 1)
     return { emoji: '💧', text: 'THIRSTY!', color: 'bg-blue-100' }
-  }
-  
-  // Check LITTER
-  if (needs.LITTER && (counts.LITTER || 0) < 1) {
+
+  if (needs.LITTER && (counts.LITTER || 0) < 1)
     return { emoji: '🧹', text: 'DIRTY LITTER!', color: 'bg-yellow-100' }
-  }
-  
-  // Check PLAY
+
   if (needs.PLAY) {
-    const lastPlayLog = careStatus?.todayLogs?.filter((log: any) => log.type === 'PLAY')
+    const lastPlayLog = careStatus?.todayLogs
+      ?.filter((log: any) => log.type === 'PLAY')
       .sort((a: any, b: any) => new Date(b.at).getTime() - new Date(a.at).getTime())[0]
-    
     let canPlay = true
-    
     if (lastPlayLog) {
       const lastPlayTimeFromDB = new Date(lastPlayLog.at).getTime()
       const nextPlayTime = lastPlayTimeFromDB + 3 * 60 * 60 * 1000
-      
-      if (Date.now() < nextPlayTime) {
-        canPlay = false
-      }
+      if (Date.now() < nextPlayTime) canPlay = false
     }
-    
-    if (canPlay && (counts.PLAY || 0) < 2) {
+    if (canPlay && (counts.PLAY || 0) < 2)
       return { emoji: '🎾', text: 'WANTS TO PLAY!', color: 'bg-green-100' }
-    }
   }
-  
-  // Check BRUSH
-  if (needs.BRUSH && (counts.BRUSH || 0) < 1) {
+
+  if (needs.BRUSH && (counts.BRUSH || 0) < 1)
     return { emoji: '🪮', text: 'NEEDS BRUSHING!', color: 'bg-purple-100' }
-  }
-  
-  // Check NAILS
-  if (needs.NAILS && (counts.NAILS || 0) < 1) {
+
+  if (needs.NAILS && (counts.NAILS || 0) < 1)
     return { emoji: '✂️', text: 'NAILS TOO LONG!', color: 'bg-indigo-100' }
-  }
-  
-  // Check VACCINE
-  if (needs.VACCINE && (counts.VACCINE || 0) < 1) {
+
+  if (needs.VACCINE && (counts.VACCINE || 0) < 1)
     return { emoji: '💉', text: 'VACCINE DUE!', color: 'bg-gray-100' }
-  }
-  
-  // If no urgent needs, return null (no circle)
+
   return null
 }
 
 export default async function PetDetailPage({ params }: PageProps) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
-    return <div>Not authenticated</div>
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  // Get the specific pet by ID and make sure it belongs to the current user
-  const pet = await prisma.pet.findFirst({
-    where: {
-      id: params.id,
-      userId: user.id // Security: only show pets that belong to this user
-    }
+  if (!user) return <div>Not authenticated</div>
+
+  const petRecord = await prisma.pet.findFirst({
+    where: { id: params.id, userId: user.id },
   })
 
-  // If pet doesn't exist or doesn't belong to user, show 404
-  if (!pet) {
-    notFound()
-  }
+  if (!petRecord) notFound()
+
+  // Fix Prisma Decimal serialization issue
+  const pet = JSON.parse(JSON.stringify(petRecord))
 
   const careStatus = await getPetCareStatus(pet.id)
   const careNeeds = analyzeCareNeeds(careStatus)
-  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet) // Pass all needed data
+  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet)
 
   return (
     <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
       <div className="max-w-2xl mx-auto pt-2">
         <div className="bg-white rounded-xl shadow-lg p-8">
-          {/* Back button */}
+          {/* Header buttons */}
           <div className="mb-6 flex justify-between items-center">
-            <Link 
+            <Link
               href="/dashboard"
-              className="font-bold  text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
+              className="text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
             >
               ← Back
             </Link>
-            <button
-              className="font-bold ml-3 text-sm bg-gray-400 hover:bg-gray-300 text-white font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded"
-            >
+            <button className="text-sm bg-gray-400 hover:bg-gray-300 text-white font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded">
               Edit
             </button>
-            <button
-              className="font-bold  text-sm bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 border-b-4 border-red-600 hover:border-red-400 rounded"
-            >
+            <button className="text-sm bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 border-b-4 border-red-600 hover:border-red-400 rounded">
               Delete Cat
             </button>
           </div>
-          
-          {/* Pet header with image */}
+
+          {/* Pet header */}
           <div className="text-center mb-8">
             {urgentNeed && (
-              <div className={`w-14 h-14 mr-55 mx-auto mb-2 animate-pulse hover:animate-bounce rounded-full overflow-hidden shadow-lg ${urgentNeed.color} flex items-center justify-center relative`}>
+              <div
+                className={`w-14 h-14 mx-auto mb-2 animate-pulse hover:animate-bounce rounded-full overflow-hidden shadow-lg ${urgentNeed.color} flex items-center justify-center relative`}
+              >
                 <span className="text-2xl">{urgentNeed.emoji}</span>
                 <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-full whitespace-nowrap">
                   {urgentNeed.text}
                 </div>
               </div>
-            )}            
-            <div className="w-32 h-32 mx-auto mb-4 hover:animate-spin rounded-full overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center">
+            )}
+            <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden shadow-lg bg-gray-100 flex items-center justify-center hover:animate-spin">
               <img
                 src={getSpeciesImage(pet.species)}
                 alt={`${formatSpeciesName(pet.species)} cat`}
                 className="w-full h-full object-cover"
               />
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {pet.name} 🐾
-            </h1>
-            <p className="text-xl text-gray-600">
-              {formatSpeciesName(pet.species)}
-            </p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{pet.name} 🐾</h1>
+            <p className="text-xl text-gray-600">{formatSpeciesName(pet.species)}</p>
             <p className="text-sm text-gray-500">
-              {pet.name} is currently ... {urgentNeed ? urgentNeed.text.toLowerCase() : 'doing well!'}
+              {pet.name} is currently...{' '}
+              {urgentNeed ? urgentNeed.text.toLowerCase() : 'doing well!'}
             </p>
           </div>
 
@@ -189,47 +146,36 @@ export default async function PetDetailPage({ params }: PageProps) {
           <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Pet Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              {/* Row 1 */}
               <div>
                 <span className="font-medium text-gray-700">Species:</span>
                 <p className="text-gray-900">{formatSpeciesName(pet.species)}</p>
               </div>
 
-              {pet.birthdate ? (
-                <div>
-                  <span className="font-medium text-gray-700">Birthday:</span>
-                  <p className="text-gray-900">{new Date(pet.birthdate).toLocaleDateString()}</p>
-                </div>
-              ) : (
-                <div><span className="font-medium text-gray-700">Birthday:</span>
-                  <p className="text-gray-900">UNKNOWN</p></div>
-              )}
+              <div>
+                <span className="font-medium text-gray-700">Birthday:</span>
+                <p className="text-gray-900">
+                  {pet.birthdate
+                    ? new Date(pet.birthdate).toLocaleDateString()
+                    : 'UNKNOWN'}
+                </p>
+              </div>
 
               <div>
                 <span className="font-medium text-gray-700">Sex:</span>
                 <p className="text-gray-900">{pet.sex}</p>
               </div>
 
-              {/* Row 2 */}
-              {pet.breed ? (
-                <div>
-                  <span className="font-medium text-gray-700">Breed:</span>
-                  <p className="text-gray-900">{pet.breed}</p>
-                </div>
-              ) : (
-                <div><span className="font-medium text-gray-700">Breed:</span>
-                  <p className="text-gray-900">UNKNOWN</p></div>
-              )}
+              <div>
+                <span className="font-medium text-gray-700">Breed:</span>
+                <p className="text-gray-900">{pet.breed || 'UNKNOWN'}</p>
+              </div>
 
-              {pet.weightKg ? (
-                <div>
-                  <span className="font-medium text-gray-700">Weight:</span>
-                  <p className="text-gray-900">{pet.weightKg}kg</p>
-                </div>
-              ) : (
-                <div><span className="font-medium text-gray-700">Weight:</span>
-                  <p className="text-gray-900">UNKNOWN</p></div>
-              )}
+              <div>
+                <span className="font-medium text-gray-700">Weight:</span>
+                <p className="text-gray-900">
+                  {pet.weightKg ? `${pet.weightKg}kg` : 'UNKNOWN'}
+                </p>
+              </div>
 
               <div>
                 <span className="font-medium text-gray-700">Neutered:</span>
@@ -237,8 +183,8 @@ export default async function PetDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
-          
 
+          {/* care tracker */}
           <CareTracker
             petId={pet.id}
             petName={pet.name}
@@ -246,22 +192,11 @@ export default async function PetDetailPage({ params }: PageProps) {
             careNeeds={careNeeds}
             pet={pet}
           />
-          <PetChat 
-            petName={pet.name}
-            petSpecies={formatSpeciesName(pet.species)}
-            pet={pet} // Add the full pet object
-
-          />
         </div>
-        
       </div>
-      <div className="w-20 h-20 ml-auto mb-4 hover:animate-spin rounded-full overflow-hidden shadow-lg bg-gray-100 flex justify-center items-center">
-              <img
-                src={getSpeciesImage(pet.species)}
-                alt={`${formatSpeciesName(pet.species)} cat`}
-                className="w-full h-full object-cover"
-              />
-            </div>
+
+      {/* floating chat button */}
+      <ChatButton pet={pet} />
     </div>
   )
 }
