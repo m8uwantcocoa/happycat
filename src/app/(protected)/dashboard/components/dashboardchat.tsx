@@ -1,0 +1,99 @@
+'use client'
+
+import { useState } from 'react'
+
+
+export default function DashboardChat() {
+    const [messages, setMessages] = useState<Array<{ role: string, content: string }>>([])
+    const [input, setInput] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
+    const sendMessage = async () => {
+        if (!input.trim()) return
+
+        setLoading(true)
+        setError(null)
+
+        try {
+            const response = await fetch('/api/openai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: input,
+                    conversation: messages,
+                    context: {
+                        currentPage: 'dashboard'
+                    }
+
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const data = await response.json()
+
+            if (data.error) {
+                setError(data.error)
+            } else {
+                setMessages(data.conversation)
+                setInput('')
+            }
+        } catch (error) {
+            console.error('Failed to send message:', error)
+            setError('Failed to get response. Please try again.')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Ask about your cats, cat care in general or about functionality!
+            </h2>
+
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                </div>
+            )}
+
+            <div className="max-h-64 overflow-y-auto mb-4 space-y-2">
+                {messages.map((msg, index) => (
+                    <div key={index} className={`p-3 rounded-lg ${msg.role === 'user'
+                            ? 'bg-blue-100 text-blue-900 ml-8'
+                            : 'bg-gray-100 text-gray-900 mr-8'
+                        }`}>
+                        <strong>{msg.role === 'user' ? 'You' : 'Cat Expert'}:</strong> {msg.content}
+                    </div>
+                ))}
+            </div>
+
+            <div className="flex gap-2">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    placeholder={`Ask about general questions...`}
+                    className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                    disabled={loading}
+                />
+                <button
+                    onClick={sendMessage}
+                    disabled={loading || !input.trim()}
+                    className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {loading ? '...' : 'Send'}
+                </button>
+            </div>
+
+            <div className="mt-2 text-xs text-gray-500">
+                Try asking: "How do I delete a cat?", "What should I feed my cat?" or "How often should I play with my cat?"
+            </div>
+        </div>
+    )
+}

@@ -2,18 +2,32 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, conversation = [], petName, petSpecies } = await request.json()
+    const { message, conversation, context = [], petName, petSpecies } = await request.json()
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
     // Create a comprehensive system message with pet info
-    const systemPrompt = `You are a helpful cat care assistant for ${petName || 'this cat'}, a ${petSpecies || 'domestic'} cat. 
+    const systemPrompt = `You are HappyCat AI, built into the HappyCat pet care app. 
 
-Give brief, practical advice about cat care, behavior, and health specific to this pet. Always mention the cat's name when giving advice. Do not give veterinary medical advice - always say "contact your vet" for health concerns.
+Current pet: ${petName || 'cat'} (${petSpecies || 'domestic cat'})
 
-Keep responses under 50 words and be friendly and encouraging.`
+You help users navigate THIS app:
+- Dashboard: Has "Add New Cat" button
+- Pet Page: Has Feed/Water/Play buttons, Edit button, Delete Cat button  
+- Chat: This window
+
+Give short, direct answers about using the HappyCat app or caring for ${petName || 'this cat'}. Never say "I cannot" or "contact support".
+
+Examples:
+Q: How do I delete my cat?
+A: Click the red "Delete Cat" button on your cat's page.
+
+Q: How do I feed my cat?  
+A: Click the blue "Feed" button in Care Tracker.
+
+Stay in character as the HappyCat app assistant.`
 
     // Try multiple free models in order of reliability
     const freeModels = [

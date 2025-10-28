@@ -184,7 +184,7 @@ export default async function PetDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* care tracker */}
+         
           <CareTracker
             petId={pet.id}
             petName={pet.name}
@@ -195,7 +195,7 @@ export default async function PetDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* floating chat button */}
+      
       <ChatButton pet={pet} />
     </div>
   )

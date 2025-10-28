@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserPets, formatSpeciesName } from '@/lib/pets'
 import Link from 'next/link'
+import ChatButton from './components/chatbutton'
 
 function getSpeciesImage(species: string): string {
   const imageMap: { [key: string]: string } = {
@@ -120,6 +121,9 @@ export default async function Dashboard() {
           )}
         </div>
       </div>
+      <ChatButton>
+        
+      </ChatButton>
     </div>
   )
 }
