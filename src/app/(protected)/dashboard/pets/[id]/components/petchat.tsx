@@ -99,7 +99,7 @@ export default function PetChat({ petName, petSpecies, pet }: PetChatProps) {
         <button
           onClick={sendMessage}
           disabled={loading || !input.trim()}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? '...' : 'Send'}
         </button>
