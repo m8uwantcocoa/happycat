@@ -179,7 +179,7 @@ export default async function PetDetailPage({ params }: PageProps) {
               {formatSpeciesName(pet.species)}
             </p>
             <p className="text-sm text-gray-500">
-              {pet.name} is currently feeling ... {careStatus.currentMood}
+              {pet.name} is currently ... {urgentNeed ? urgentNeed.text.toLowerCase() : 'doing well!'}
             </p>
           </div>
 

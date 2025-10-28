@@ -258,7 +258,7 @@ const getRandomFact = () => {
 
       {/* Care Info Modal */}
       {showCareInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="bg-white rounded-xl max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
         <div className="flex justify-between items-center">
