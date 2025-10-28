@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPetCareStatus, analyzeCareNeeds } from '@/lib/caresystem'
 import CareTracker from './components/caretracker'
+import PetChat from './components/petchat'
+
 
 // Helper function for pet image
 function getSpeciesImage(species: string): string {
@@ -235,6 +237,7 @@ export default async function PetDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+          
 
           <CareTracker
             petId={pet.id}
@@ -243,8 +246,22 @@ export default async function PetDetailPage({ params }: PageProps) {
             careNeeds={careNeeds}
             pet={pet}
           />
+          <PetChat 
+            petName={pet.name}
+            petSpecies={formatSpeciesName(pet.species)}
+            pet={pet} // Add the full pet object
+
+          />
         </div>
+        
       </div>
+      <div className="w-20 h-20 ml-auto mb-4 hover:animate-spin rounded-full overflow-hidden shadow-lg bg-gray-100 flex justify-center items-center">
+              <img
+                src={getSpeciesImage(pet.species)}
+                alt={`${formatSpeciesName(pet.species)} cat`}
+                className="w-full h-full object-cover"
+              />
+            </div>
     </div>
   )
 }
