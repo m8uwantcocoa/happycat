@@ -29,7 +29,6 @@ A: Click the blue "Feed" button in Care Tracker.
 
 Stay in character as the HappyCat app assistant.`
 
-    // Try multiple free models in order of reliability
     const freeModels = [
       "google/gemma-2-9b-it:free",              // Usually most reliable
       "meta-llama/llama-3.2-3b-instruct:free", // Good backup

@@ -422,13 +422,12 @@ const getRandomFact = () => {
           onClick={() => performCare('FEED' as CareType)}
           disabled={shouldDisableButton('FEED')}
           className={getButtonClass(
-            "py-3 px-4 font-semibold hover:animate-bounce text-sm bg-orange-500 hover:bg-orange-400 text-orange-200 font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-orange-500 hover:bg-orange-400 text-orange-200 font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded",
             safeCareNeeds.FEED,
             'FEED'
           )}
         >
           🍽️ {loading === 'FEED' ? 'Feeding...' : 'Food'}
-          <div className="text-xs font-normal">({safeCareCounts.FEED || 0}/ {pet.feedingTime})</div>
           {safeCareNeeds.FEED && !shouldDisableButton('FEED') && <div className="text-xs font-normal text-red-200">HUNGRY!</div>}
         </button>
 
@@ -436,13 +435,12 @@ const getRandomFact = () => {
           onClick={() => performCare('WATER' as CareType)}
           disabled={shouldDisableButton('WATER')}
           className={getButtonClass(
-            "py-3 px-4 font-semibold hover:animate-bounce text-sm bg-blue-500 hover:bg-blue-400 text-blue-200 font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-blue-500 hover:bg-blue-400 text-blue-200 font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded",
             safeCareNeeds.WATER,
             'WATER'
           )}
         >
           💧 {loading === 'WATER' ? 'Giving...' : 'Water'}
-          <div className="text-xs font-normal">({safeCareCounts.WATER || 0}/1)</div>
           {safeCareNeeds.WATER && !shouldDisableButton('WATER') && <div className="text-xs font-normal text-red-200">THIRSTY!</div>}
         </button>
 
@@ -450,26 +448,24 @@ const getRandomFact = () => {
           onClick={() => performCare('TREAT' as CareType)}
           disabled={shouldDisableButton('TREAT')}
           className={getButtonClass(
-            "py-4 px-3 font-semibold hover:animate-bounce text-sm bg-pink-500 hover:bg-pink-400 text-pink-200 font-bold py-2 px-4 border-b-4 border-pink-700 hover:border-pink-500 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-pink-500 hover:bg-pink-400 text-pink-200 font-bold py-2 px-4 border-b-4 border-pink-700 hover:border-pink-500 rounded",
             false,
             'TREAT'
           )}
         >
           🍬 {loading === 'TREAT' ? 'Giving...' : 'Treats'}
-          <div className="text-xs font-normal">({safeCareCounts.TREAT || 0}/5)</div>
         </button>
 
         <button 
           onClick={() => performCare('NAILS' as CareType)}
           disabled={shouldDisableButton('NAILS')}
           className={getButtonClass(
-            "py-2 px-3 font-semibold hover:animate-bounce text-sm bg-indigo-500 hover:bg-indigo-400 text-indigo-200 font-bold py-2 px-4 border-b-4 border-indigo-700 hover:border-indigo-500 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-indigo-500 hover:bg-indigo-400 text-indigo-200 font-bold py-2 px-4 border-b-4 border-indigo-700 hover:border-indigo-500 rounded",
             safeCareNeeds.NAILS,
             'NAILS'
           )}
         >
           ✂️ {loading === 'NAILS' ? 'Trimming...' : 'Trim Nails'}
-          <div className="text-xs font-normal">({safeCareCounts.NAILS || 0}/1)</div>
           {safeCareNeeds.NAILS && !shouldDisableButton('NAILS') && <div className="text-xs font-normal text-red-200">OVERDUE!</div>}
         </button>
 
@@ -477,13 +473,12 @@ const getRandomFact = () => {
           onClick={() => performCare('BRUSH' as CareType)}
           disabled={shouldDisableButton('BRUSH')}
           className={getButtonClass(
-            "py-2 px-3 font-semibold hover:animate-bounce text-sm bg-yellow-700 hover:bg-yellow-600 text-yellow-200 font-bold py-2 px-4 border-b-4 border-yellow-900 hover:border-yellow-800 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-yellow-700 hover:bg-yellow-600 text-yellow-200 font-bold py-2 px-4 border-b-4 border-yellow-900 hover:border-yellow-800 rounded",
             safeCareNeeds.BRUSH,
             'BRUSH'
           )}
         >
           🪮 {loading === 'BRUSH' ? 'Brushing...' : 'Brush Fur'}
-          <div className="text-xs font-normal">({safeCareCounts.BRUSH || 0}/1)</div>
           {safeCareNeeds.BRUSH && !shouldDisableButton('BRUSH') && <div className="text-xs font-normal text-red-200">NEEDS BRUSHING!</div>}
         </button>
 
@@ -491,13 +486,12 @@ const getRandomFact = () => {
           onClick={() => performCare('LITTER' as CareType)}
           disabled={shouldDisableButton('LITTER')}
           className={getButtonClass(
-            "py-3 px-3 font-semibold hover:animate-bounce text-sm bg-yellow-400 hover:bg-yellow-300 text-yellow-700 font-bold py-2 px-4 border-b-4 border-yellow-600 hover:border-yellow-400 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-yellow-400 hover:bg-yellow-300 text-yellow-700 font-bold py-2 px-4 border-b-4 border-yellow-600 hover:border-yellow-400 rounded",
             safeCareNeeds.LITTER,
             'LITTER'
           )}
         >
           🧹 {loading === 'LITTER' ? 'Cleaning...' : 'Clean Litter'}
-          <div className="text-xs font-normal">({safeCareCounts.LITTER || 0}/3)</div>
           {safeCareNeeds.LITTER && !shouldDisableButton('LITTER') && <div className="text-xs font-normal text-red-800">DIRTY!</div>}
         </button>
 
@@ -505,13 +499,12 @@ const getRandomFact = () => {
           onClick={() => performCare('PLAY' as CareType)}
           disabled={shouldDisableButton('PLAY')}
           className={getButtonClass(
-            "py-2 px-3 font-semibold hover:animate-bounce text-sm bg-teal-400 hover:bg-teal-300 text-teal-700 font-bold py-2 px-4 border-b-4 border-teal-600 hover:border-teal-400 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-teal-400 hover:bg-teal-300 text-teal-700 font-bold py-2 px-4 border-b-4 border-teal-600 hover:border-teal-400 rounded",
             safeCareNeeds.PLAY,
             'PLAY'
           )}
         >
           🎾 {loading === 'PLAY' ? 'Playing...' : 'Play'}
-          <div className="text-xs font-normal">({safeCareCounts.PLAY || 0}/2)</div>
           {safeCareNeeds.PLAY && !shouldDisableButton('PLAY') && <div className="text-xs font-normal text-red-800">WANTS TO PLAY!</div>}
         </button>
 
@@ -519,13 +512,12 @@ const getRandomFact = () => {
           onClick={() => performCare('VACCINE' as CareType)}
           disabled={shouldDisableButton('VACCINE')}
           className={getButtonClass(
-            "py-2 px-3 font-semibold hover:animate-bounce text-sm bg-gray-400 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded",
+            "py-1 px-1 font-semibold hover:animate-bounce text-sm bg-gray-400 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded",
             safeCareNeeds.VACCINE,
             'VACCINE'
           )}
         >
           💉 {loading === 'VACCINE' ? 'Vaccinating...' : 'Vaccination'}
-          <div className="text-xs font-normal">({safeCareCounts.VACCINE || 0}/1)</div>
           {safeCareNeeds.VACCINE && !shouldDisableButton('VACCINE') && <div className="text-xs font-normal text-red-800">DUE!</div>}
         </button>
 

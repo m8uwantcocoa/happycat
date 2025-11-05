@@ -31,49 +31,80 @@ export default function AddPet() {
   const [loadingSpeciesHelp, setLoadingSpeciesHelp] = useState(false)
   const [showPostCreateScreen, setShowPostCreateScreen] = useState(false)
 
-  // validation UI state (added)
+  // validation UI state
   const [weightError, setWeightError] = useState<string | null>(null)
   const [weightWarning, setWeightWarning] = useState<string | null>(null)
   const [birthdateError, setBirthdateError] = useState<string | null>(null)
   const [birthdateWarning, setBirthdateWarning] = useState<string | null>(null)
   const [nameError, setNameError] = useState<string | null>(null)
+  const [feedingTimeError, setFeedingTimeError] = useState<string | null>(null)
+  const [feedingFrequencyError, setFeedingFrequencyError] = useState<string | null>(null)
+  const [brushError, setBrushError] = useState<string | null>(null)
+  const [litterError, setLitterError] = useState<string | null>(null)
 
   const router = useRouter()
 
-  // ---------------- Validation config (tweak here if needed) ----------------
-  const MIN_PLAUSIBLE_KG = 0.3   // below this -> implausible for a living kitten
-  const WARNING_KG = 12.0        // above this -> warning (non-blocking)
-  const ABSOLUTE_MAX_KG = 25.0   // above this -> block (prevents 200kg)
-  const MIN_ALLOWED_YEAR = 1987  // user requested: don't accept born before 1995 (you changed it)
-  const ABSOLUTE_MAX_AGE = 38    // block if age >= 30 (you changed it)
-  const SENIOR_AGE_WARNING = 12  // warn if older than this
-  // ------------------------------------------------------------------------
+  // ---------------- Validation config ----------------
+  const MIN_PLAUSIBLE_KG = 0.3
+  const WARNING_KG = 12.0
+  const ABSOLUTE_MAX_KG = 25.0
+  const MIN_ALLOWED_YEAR = 1987  // user note said 1995 earlier; keeping your 1987 constant
+  const ABSOLUTE_MAX_AGE = 38
+  const SENIOR_AGE_WARNING = 12
+  const MIN_WEEKLY = 1
+  const MAX_WEEKLY = 7
+  // ---------------------------------------------------
 
   // ---------------- VALIDATION HELPERS ----------------
   const validateFeedingTime = (input: HTMLInputElement) => {
     const value = parseInt(input.value)
-    if (value < 1 || value > 5) {
-      input.setCustomValidity('Your cat needs to be fed 1–5 times per day.')
-    } else {
-      input.setCustomValidity('')
+    const freq = Math.max(1, Math.min(24, parseInt(feedingFrequency) || 1))
+    const maxMealsFromHours = Math.max(1, Math.floor(24 / freq))
+
+    if (Number.isNaN(value)) {
+      const msg = 'Enter meals/day as a number.'
+      input.setCustomValidity(msg)
+      setFeedingTimeError(msg)
+      return
     }
+    if (value < 1 || value > 24) {
+      const msg = 'Meals/day must be 1–24.'
+      input.setCustomValidity(msg)
+      setFeedingTimeError(msg)
+      return
+    }
+    if (value > maxMealsFromHours) {
+      const msg = `With ${freq}h between meals, max meals/day is ${maxMealsFromHours}.`
+      input.setCustomValidity(msg)
+      setFeedingTimeError(msg)
+      return
+    }
+    input.setCustomValidity('')
+    setFeedingTimeError(null)
   }
 
   const validateFeedingFrequency = (input: HTMLInputElement) => {
     const value = parseInt(input.value)
-    if (value < 1 || value > 24) {
-      input.setCustomValidity('Feeding interval must be 1–24 hours.')
-    } else {
-      input.setCustomValidity('')
+    if (Number.isNaN(value)) {
+      const msg = 'Enter hours between meals as a number.'
+      input.setCustomValidity(msg)
+      setFeedingFrequencyError(msg)
+      return
     }
+    if (value < 1 || value > 24) {
+      const msg = 'Feeding interval must be 1–24 hours.'
+      input.setCustomValidity(msg)
+      setFeedingFrequencyError(msg)
+      return
+    }
+    input.setCustomValidity('')
+    setFeedingFrequencyError(null)
+
+    // keep meals/day constraint in sync
+    const mealsEl = document.getElementById('feedingTime') as HTMLInputElement | null
+    if (mealsEl) validateFeedingTime(mealsEl)
   }
 
-  /**
-   * Enhanced validateWeight:
-   * - keeps your setCustomValidity behavior for native HTML validity
-   * - also sets React state for inline UI (error/warning)
-   * - blocks absurd values like 200kg by using ABSOLUTE_MAX_KG
-   */
   const validateWeight = (input: HTMLInputElement) => {
     const raw = input.value
     if (!raw) {
@@ -92,10 +123,7 @@ export default function AddPet() {
       return
     }
 
-    // value is in kg (your field label says kg)
     const kg = value
-
-    // absolute impossible / too small
     if (kg <= 0 || kg < MIN_PLAUSIBLE_KG) {
       const msg = `That weight (${kg} kg) is unrealistically low for a cat.`
       input.setCustomValidity(msg)
@@ -104,7 +132,6 @@ export default function AddPet() {
       return
     }
 
-    // absolute impossible / too large (blocks things like 200kg)
     if (kg > ABSOLUTE_MAX_KG) {
       const msg = `That weight (${kg} kg) is implausible. Please check units or value.`
       input.setCustomValidity(msg)
@@ -113,50 +140,37 @@ export default function AddPet() {
       return
     }
 
-    // a strong but non-blocking warning for heavy cats
     if (kg > WARNING_KG) {
       const warn = `Unusually heavy for a cat (${kg.toFixed(1)} kg). Consider double-checking or add health notes.`
-      input.setCustomValidity('') // allow submit (unless other errors exist)
+      input.setCustomValidity('')
       setWeightError(null)
       setWeightWarning(warn)
       return
     }
 
-    // within normal range
     input.setCustomValidity('')
     setWeightError(null)
     setWeightWarning(null)
   }
 
-  /**
-   * validateName: keep existing logic but also reflect in state for disabling submit
-   * (you already call this onInput in your form).
-   */
   const validateName = (input: HTMLInputElement) => {
     if (input.value.length < 2) {
-      input.setCustomValidity('Your pet needs a proper name (min 2 chars).')
-      setNameError('Your pet needs a proper name (min 2 chars).')
+      const msg = 'Your pet needs a proper name (min 2 chars).'
+      input.setCustomValidity(msg)
+      setNameError(msg)
     } else if (input.value.length > 50) {
-      input.setCustomValidity('That name is too long! Keep it short.')
-      setNameError('That name is too long! Keep it short.')
+      const msg = 'That name is too long! Keep it short.'
+      input.setCustomValidity(msg)
+      setNameError(msg)
     } else {
       input.setCustomValidity('')
       setNameError(null)
     }
   }
 
-  /**
-   * validateBirthdate: new function that checks:
-   * - correct date format / not empty (optional field)
-   * - not in the future
-   * - not before MIN_ALLOWED_YEAR (user requested blocking before 1995)
-   * - age < ABSOLUTE_MAX_AGE (block)
-   * - warn if older than SENIOR_AGE_WARNING
-   */
   const validateBirthdate = (input: HTMLInputElement) => {
     const raw = input.value
     if (!raw) {
-      // optional field - clear errors if empty
       input.setCustomValidity('')
       setBirthdateError(null)
       setBirthdateWarning(null)
@@ -209,10 +223,45 @@ export default function AddPet() {
       return
     }
 
-    // ok
     input.setCustomValidity('')
     setBirthdateError(null)
     setBirthdateWarning(null)
+  }
+
+  const validateBrushPerWeek = (input: HTMLInputElement) => {
+    const v = parseInt(input.value)
+    if (Number.isNaN(v)) {
+      const msg = 'Enter brushing per week as a number.'
+      input.setCustomValidity(msg)
+      setBrushError(msg)
+      return
+    }
+    if (v < MIN_WEEKLY || v > MAX_WEEKLY) {
+      const msg = `Brushing must be ${MIN_WEEKLY}–${MAX_WEEKLY} times/week.`
+      input.setCustomValidity(msg)
+      setBrushError(msg)
+      return
+    }
+    input.setCustomValidity('')
+    setBrushError(null)
+  }
+
+  const validateLitterPerWeek = (input: HTMLInputElement) => {
+    const v = parseInt(input.value)
+    if (Number.isNaN(v)) {
+      const msg = 'Enter litter changes per week as a number.'
+      input.setCustomValidity(msg)
+      setLitterError(msg)
+      return
+    }
+    if (v < MIN_WEEKLY || v > MAX_WEEKLY) {
+      const msg = `Litter changes must be ${MIN_WEEKLY}–${MAX_WEEKLY} times/week.`
+      input.setCustomValidity(msg)
+      setLitterError(msg)
+      return
+    }
+    input.setCustomValidity('')
+    setLitterError(null)
   }
 
   // ---------------- AI HELPERS ----------------
@@ -283,8 +332,25 @@ export default function AddPet() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Do one last validation round before trying to submit
-    if (weightError || birthdateError || nameError) {
+    // validate related fields just before submit
+    const mealsEl = document.getElementById('feedingTime') as HTMLInputElement | null
+    const freqEl = document.getElementById('feedingFrequency') as HTMLInputElement | null
+    const brushEl = document.getElementById('brushFrequencyPerWeek') as HTMLInputElement | null
+    const litterEl = document.getElementById('litterChangeTime') as HTMLInputElement | null
+    mealsEl && validateFeedingTime(mealsEl)
+    freqEl && validateFeedingFrequency(freqEl)
+    brushEl && validateBrushPerWeek(brushEl)
+    litterEl && validateLitterPerWeek(litterEl)
+
+    if (
+      weightError ||
+      birthdateError ||
+      nameError ||
+      feedingTimeError ||
+      feedingFrequencyError ||
+      brushError ||
+      litterError
+    ) {
       setMessage('Please fix highlighted issues before saving.')
       return
     }
@@ -312,15 +378,12 @@ export default function AddPet() {
         }),
       })
 
-      // If API returned a non-2xx, try to surface the server message
       if (!response.ok) {
         let errText = 'Failed to add pet'
         try {
           const errJson = await response.json()
-          // server might return { error: '...' } or other shapes
           errText = errJson?.error ?? errJson?.message ?? JSON.stringify(errJson)
         } catch (err) {
-          // fallback to status text
           errText = response.statusText || errText
         }
         setMessage(errText)
@@ -328,27 +391,28 @@ export default function AddPet() {
         return
       }
 
-      // success: optionally fetch the after-create plan but don't block navigation
-      // start it but don't await if you want instant navigation:
       generateAfterSubmitPlan(name).catch((err) => console.warn('After-create plan failed', err))
-
-      // navigate to dashboard right away
       router.push('/dashboard')
-
     } catch (error) {
       console.error('Error adding pet:', error)
       setMessage('Something went wrong. Please try again.')
       setLoading(false)
     } finally {
-      // if you navigated away above, this component unmounts; safe to keep
       setLoading(false)
     }
   }
 
-  // helper: whether form is allowed to submit
-  const formHasBlockingErrors = Boolean(weightError || birthdateError || nameError)
+  const formHasBlockingErrors = Boolean(
+    weightError ||
+    birthdateError ||
+    nameError ||
+    feedingTimeError ||
+    feedingFrequencyError ||
+    brushError ||
+    litterError
+  )
 
-  // ---------------- POST CREATE SCREEN (not used when we navigate immediately) ----------------
+  // ---------------- POST CREATE SCREEN (unused if navigating immediately) ----------------
   if (showPostCreateScreen) {
     return (
       <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
@@ -441,7 +505,14 @@ export default function AddPet() {
                 <label htmlFor="species" className="text-sm font-medium text-gray-700">
                   Cat Type *
                 </label>
-
+                {/* Optional helper trigger
+                <button
+                  type="button"
+                  onClick={handleSpeciesHelp}
+                  className="text-[11px] bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                >
+                  Help me choose
+                </button> */}
               </div>
               <select
                 id="species"
@@ -532,7 +603,7 @@ export default function AddPet() {
               {weightError && <p className="text-xs text-red-600 mt-1">{weightError}</p>}
               {!weightError && weightWarning && <p className="text-xs text-yellow-700 mt-1">{weightWarning}</p>}
               <p className="text-xs text-gray-500 mt-1">
-                Typical range: 3-5kg for most cats
+                Typical range: 3–5kg for most cats
               </p>
             </div>
 
@@ -565,25 +636,20 @@ export default function AddPet() {
                     type="number"
                     id="feedingTime"
                     required
-                    max={5}
+                    max={24}
                     min={1}
                     onInput={(e) => validateFeedingTime(e.currentTarget)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className={`w-full px-3 py-2 border ${feedingTimeError ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
                     placeholder="e.g., 2"
                     value={feedingTime}
                     onChange={(e) => {
-                      // Prevent negative values and enforce minimum of 1
-                      const value = Math.max(1, parseInt(e.target.value) || 1)
-                      setFeedingTime(value.toString())
+                      const n = Math.max(1, Math.min(24, parseInt(e.target.value) || 1))
+                      setFeedingTime(n.toString())
                     }}
-                    onBlur={(e) => {
-                      // Ensure value is at least 1 when user leaves field
-                      if (!e.target.value || parseInt(e.target.value) < 1) {
-                        setFeedingTime('1')
-                        e.target.value = '1'
-                      }
-                    }}
+                    onBlur={(e) => validateFeedingTime(e.currentTarget)}
+                    aria-invalid={Boolean(feedingTimeError)}
                   />
+                  {feedingTimeError && <p className="text-xs text-red-600 mt-1">{feedingTimeError}</p>}
                 </div>
 
                 <div>
@@ -597,11 +663,19 @@ export default function AddPet() {
                     max={24}
                     min={1}
                     onInput={(e) => validateFeedingFrequency(e.currentTarget)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    className={`w-full px-3 py-2 border ${feedingFrequencyError ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
                     placeholder="e.g., 8"
                     value={feedingFrequency}
                     onChange={(e) => setFeedingFrequency(e.target.value)}
+                    onBlur={(e) => validateFeedingFrequency(e.currentTarget)}
+                    aria-invalid={Boolean(feedingFrequencyError)}
                   />
+                  {feedingFrequencyError && <p className="text-xs text-red-600 mt-1">{feedingFrequencyError}</p>}
+                  {!feedingFrequencyError && feedingFrequency && (
+                    <p className="text-[11px] text-gray-600 mt-1">
+                      With {feedingFrequency}h between meals, max meals/day is {Math.max(1, Math.floor(24 / Math.max(1, Math.min(24, parseInt(feedingFrequency) || 1))))}.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -613,34 +687,42 @@ export default function AddPet() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="brushFrequencyPerWeek" className="text-sm font-medium text-gray-700 mb-2 block">
-                    Brushing per week
+                    Brushing (per week)
                   </label>
                   <input
                     type="number"
                     id="brushFrequencyPerWeek"
-                    min="0"
-                    max="14"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    min={MIN_WEEKLY}
+                    max={MAX_WEEKLY}
+                    className={`w-full px-3 py-2 border ${brushError ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
                     placeholder="e.g., 3"
                     value={brushFrequencyPerWeek}
+                    onInput={(e) => validateBrushPerWeek(e.currentTarget)}
+                    onBlur={(e) => validateBrushPerWeek(e.currentTarget)}
                     onChange={(e) => setBrushFrequencyPerWeek(e.target.value)}
+                    aria-invalid={Boolean(brushError)}
                   />
+                  {brushError && <p className="text-xs text-red-600 mt-1">{brushError}</p>}
                 </div>
 
                 <div>
                   <label htmlFor="litterChangeTime" className="text-sm font-medium text-gray-700 mb-2 block">
-                    Days between litter changes
+                    Litter changes (per week)
                   </label>
                   <input
                     type="number"
                     id="litterChangeTime"
-                    min="1"
-                    max="7"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    min={MIN_WEEKLY}
+                    max={MAX_WEEKLY}
+                    className={`w-full px-3 py-2 border ${litterError ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
                     placeholder="e.g., 2"
                     value={litterChangeTime}
+                    onInput={(e) => validateLitterPerWeek(e.currentTarget)}
+                    onBlur={(e) => validateLitterPerWeek(e.currentTarget)}
                     onChange={(e) => setLitterChangeTime(e.target.value)}
+                    aria-invalid={Boolean(litterError)}
                   />
+                  {litterError && <p className="text-xs text-red-600 mt-1">{litterError}</p>}
                 </div>
               </div>
             </div>
