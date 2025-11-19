@@ -109,10 +109,7 @@ export default function CareTracker({ petId, petName, careStatus, careNeeds,pet 
   const [message, setMessage] = useState<string | null>(null)
   const [showCareInfo, setShowCareInfo] = useState(false) // Add this state
 
-  // Debug: Log the props to see what's missing
-  console.log('CareTracker props:', { careStatus, careNeeds })
 
-  // Provide defaults for new pets
   const safeCareCounts = careNeeds?.counts || {}
   const safeCareNeeds = careNeeds?.needs || {}
 
@@ -256,7 +253,6 @@ const getRandomFact = () => {
         </button>
       </div>
 
-      {/* Care Info Modal */}
       {showCareInfo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <div className="bg-white rounded-xl max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
@@ -555,20 +551,16 @@ const getRandomFact = () => {
         <div className={`relative flex flex-col items-center justify-center space-y-4
                         transform transition-transform duration-500 ease-in-out
                         ${loading ? 'scale-100' : 'scale-95'}`}>
-          {/* Spinner */}
           <div className="absolute w-32 h-32 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
           
-          {/* Emoji */}
           <span className="text-7xl animate-bounce z-10">🐱</span>
           
-          {/* Main loading text */}
           <p className="text-center text-lg font-semibold z-10 text-gray-900 mt-36">
             Fantastic! You've cared for your virtual pet. Don't forget to do it in real life too! <br />
             😸 One-minute break… 
           </p>
         </div>
 
-        {/* Random cat fact at the bottom */}
         <div className="fixed bottom-4 w-full text-center font-bold italic text-m text-gray-700 z-10 ">
           Did you know: "{getRandomFact()}"
         </div>

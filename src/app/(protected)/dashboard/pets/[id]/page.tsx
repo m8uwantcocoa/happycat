@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation'
 import { getPetCareStatus, analyzeCareNeeds } from '@/lib/caresystem'
 import CareTracker from './components/caretracker'
 
-// Helper function for pet image
 function getSpeciesImage(species: string): string {
   const imageMap: { [key: string]: string } = {
     'RAGDOLL': '/ragdoll.png',
@@ -24,19 +23,16 @@ interface PageProps {
   }
 }
 
-// Updated function that considers button availability
 function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
   const needs = careNeeds.needs || {}
   const counts = careNeeds.counts || {}
   
-  // Check if FEED is needed AND button is clickable
   if (needs.FEED) {
     const lastFeedLog = careStatus?.todayLogs?.filter((log: any) => log.type === 'FEED')
       .sort((a: any, b: any) => new Date(b.at).getTime() - new Date(a.at).getTime())[0]
     
     let canFeed = true
     
-    // Check if enough time has passed since last feeding
     if (lastFeedLog) {
       const lastFeedTimeFromDB = new Date(lastFeedLog.at).getTime()
       const nextFeedTime = lastFeedTimeFromDB + pet.feedingFrequency * 60 * 60 * 1000
@@ -46,7 +42,6 @@ function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
       }
     }
     
-    // Check if daily limit reached
     if ((counts.FEED || 0) >= pet.feedingTime) {
       canFeed = false
     }
@@ -56,17 +51,14 @@ function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
     }
   }
   
-  // Check WATER
   if (needs.WATER && (counts.WATER || 0) < 1) {
     return { emoji: '💧', text: 'THIRSTY!', color: 'bg-blue-100' }
   }
   
-  // Check LITTER
   if (needs.LITTER && (counts.LITTER || 0) < 1) {
     return { emoji: '🧹', text: 'DIRTY LITTER!', color: 'bg-yellow-100' }
   }
   
-  // Check PLAY
   if (needs.PLAY) {
     const lastPlayLog = careStatus?.todayLogs?.filter((log: any) => log.type === 'PLAY')
       .sort((a: any, b: any) => new Date(b.at).getTime() - new Date(a.at).getTime())[0]
@@ -87,22 +79,18 @@ function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
     }
   }
   
-  // Check BRUSH
   if (needs.BRUSH && (counts.BRUSH || 0) < 1) {
     return { emoji: '🪮', text: 'NEEDS BRUSHING!', color: 'bg-purple-100' }
   }
   
-  // Check NAILS
   if (needs.NAILS && (counts.NAILS || 0) < 1) {
     return { emoji: '✂️', text: 'NAILS TOO LONG!', color: 'bg-indigo-100' }
   }
   
-  // Check VACCINE
   if (needs.VACCINE && (counts.VACCINE || 0) < 1) {
     return { emoji: '💉', text: 'VACCINE DUE!', color: 'bg-gray-100' }
   }
   
-  // If no urgent needs, return null (no circle)
   return null
 }
 
@@ -114,28 +102,25 @@ export default async function PetDetailPage({ params }: PageProps) {
     return <div>Not authenticated</div>
   }
 
-  // Get the specific pet by ID and make sure it belongs to the current user
   const pet = await prisma.pet.findFirst({
     where: {
       id: params.id,
-      userId: user.id // Security: only show pets that belong to this user
+      userId: user.id // 
     }
   })
 
-  // If pet doesn't exist or doesn't belong to user, show 404
   if (!pet) {
     notFound()
   }
 
   const careStatus = await getPetCareStatus(pet.id)
   const careNeeds = analyzeCareNeeds(careStatus)
-  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet) // Pass all needed data
+  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet) // 
 
   return (
     <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
       <div className="max-w-2xl mx-auto pt-2">
         <div className="bg-white rounded-xl shadow-lg p-8">
-          {/* Back button */}
           <div className="mb-6 flex justify-between items-center">
             <Link 
               href="/dashboard"
@@ -155,7 +140,7 @@ export default async function PetDetailPage({ params }: PageProps) {
             </button>
           </div>
           
-          {/* Pet header with image */}
+          {/* Pet  image */}
           <div className="text-center mb-8">
             {urgentNeed && (
               <div className={`w-14 h-14 mr-55 mx-auto mb-2 animate-pulse hover:animate-bounce rounded-full overflow-hidden shadow-lg ${urgentNeed.color} flex items-center justify-center relative`}>
@@ -187,7 +172,6 @@ export default async function PetDetailPage({ params }: PageProps) {
           <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Pet Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-              {/* Row 1 */}
               <div>
                 <span className="font-medium text-gray-700">Species:</span>
                 <p className="text-gray-900">{formatSpeciesName(pet.species)}</p>
@@ -208,7 +192,6 @@ export default async function PetDetailPage({ params }: PageProps) {
                 <p className="text-gray-900">{pet.sex}</p>
               </div>
 
-              {/* Row 2 */}
               {pet.breed ? (
                 <div>
                   <span className="font-medium text-gray-700">Breed:</span>

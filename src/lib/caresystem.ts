@@ -4,13 +4,11 @@ import { CareType, CareLog } from '@prisma/client'
 export async function getPetCareStatus(petId: string) {
   const now = new Date()
   
-  // Different time periods for different care types
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
 
-  // Get logs for different time periods
   const recentLogs = await prisma.careLog.findMany({
     where: {
       petId,
@@ -19,16 +17,13 @@ export async function getPetCareStatus(petId: string) {
     orderBy: { at: 'desc' }
   })
 
-  // Filter logs by time periods
   const todayLogs = recentLogs.filter(log => log.at >= today)
   const weekLogs = recentLogs.filter(log => log.at >= weekAgo)
   const monthLogs = recentLogs.filter(log => log.at >= monthAgo)
   const yearLogs = recentLogs.filter(log => log.at >= yearAgo)
 
-  // Calculate mood based on care frequency
   let mood = 3 // Base mood
   
-  // Daily care affects mood more
   const todayFeed = todayLogs.filter(log => log.type === 'FEED').length
   const todayWater = todayLogs.filter(log => log.type === 'WATER').length
   const todayPlay = todayLogs.filter(log => log.type === 'PLAY').length
@@ -56,21 +51,18 @@ export async function getPetCareStatus(petId: string) {
 export function analyzeCareNeeds(careStatus: any) {
   const { todayLogs, weekLogs, monthLogs, yearLogs } = careStatus
   
-  // Count different time periods
   const todayCount = (type: CareType) => todayLogs.filter((log: CareLog) => log.type === type).length
   const weekCount = (type: CareType) => weekLogs.filter((log: CareLog) => log.type === type).length
   const monthCount = (type: CareType) => monthLogs.filter((log: CareLog) => log.type === type).length
   const yearCount = (type: CareType) => yearLogs.filter((log: CareLog) => log.type === type).length
 
   const counts = {
-    // Daily counts
     FEED: todayCount('FEED'),
     WATER: todayCount('WATER'),
     TREAT: todayCount('TREAT'),
     PLAY: todayCount('PLAY'),
     LITTER: todayCount('LITTER'),
     
-    // Weekly/monthly/yearly counts
     NAILS: weekCount('NAILS'),      // Per week
     BRUSH: Math.floor(monthCount('BRUSH') / 2), // Every 2 weeks
     VACCINE: yearCount('VACCINE'),  // Per year
@@ -97,7 +89,6 @@ export function analyzeCareNeeds(careStatus: any) {
 export async function performCareActivity(petId: string, careType: CareType, amountG?: number, note?: string) {
   const now = new Date()
   
-  // 1. Log the care activity
   const careLog = await prisma.careLog.create({
     data: {
       petId,
@@ -108,24 +99,22 @@ export async function performCareActivity(petId: string, careType: CareType, amo
     }
   })
 
-  // 2. Update mood based on care type
   let moodChange = 0
   switch (careType) {
     case CareType.BRUSH:
-      moodChange = 0.5  // +0.5 mood for brushing
+      moodChange = 0.5  
       break
     case CareType.FEED:
-      moodChange = 0.2  // Small mood boost for feeding
+      moodChange = 0.2  
       break
     case CareType.TREAT:
-      moodChange = 1    // +1 mood for treats
+      moodChange = 1    
       break
     case CareType.PLAY:
-      moodChange = 1    // +1 mood for play
+      moodChange = 1    
       break
   }
 
-  // 3. Update or create today's mood log
   if (moodChange > 0) {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     

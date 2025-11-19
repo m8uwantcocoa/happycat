@@ -13,17 +13,14 @@ export async function createClient() {
           return cookieStore.get(name)?.value
         },
         set() {
-          // No-op for server components
         },
         remove() {
-          // No-op for server components
         },
       },
     }
   )
 }
 
-// For Server Actions and Route Handlers where you need to modify cookies
 export async function createClientWithCookieAccess() {
   const cookieStore = await cookies()
   

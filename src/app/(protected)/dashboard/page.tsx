@@ -10,7 +10,7 @@ function getSpeciesImage(species: string): string {
     'PERSIAN': '/persian.png'
   }
   
-  return imageMap[species] || '/ragdoll.png' // Default to ragdoll if species not found
+  return imageMap[species] || '/ragdoll.png' 
 }
 
 
@@ -22,7 +22,6 @@ export default async function Dashboard() {
     return <div>Not authenticated</div>
   }
 
-  // Get user's pets using your existing Pet model
   const pets = await getUserPets(user.id)
   const hasPets = pets.length > 0
 

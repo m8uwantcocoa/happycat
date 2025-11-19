@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Pet ID and care type required' }, { status: 400 })
     }
 
-    // Verify pet belongs to user
     const pet = await prisma.pet.findFirst({
       where: {
         id: petId,
