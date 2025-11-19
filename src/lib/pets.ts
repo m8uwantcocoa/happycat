@@ -2,23 +2,17 @@ import { prisma } from '@/lib/prisma'
 import type { Pet, CreatePetData } from '@/types/pet'
 import { Species, Sex } from '@prisma/client'
 
-// Remove the duplicate import of prisma and CareType since you're not using CareType in this file
-
-// Create or get user profile
 async function ensureUserProfile(userId: string) {
   try {
-    // Try to find existing profile
     let profile = await prisma.profile.findUnique({
       where: { id: userId }
     })
     
-    // If no profile exists, create one with just the required fields
     if (!profile) {
       profile = await prisma.profile.create({
         data: {
           id: userId,
-          // Only include fields that actually exist in your Profile model
-          // Remove email since it's not in your schema
+         
         }
       })
     }
@@ -49,7 +43,6 @@ export async function getUserPets(userId: string): Promise<Pet[]> {
 
 export async function createPet(userId: string, petData: CreatePetData): Promise<Pet | null> {
   try {
-    // First, ensure the user profile exists (without email parameter)
     const profile = await ensureUserProfile(userId)
     if (!profile) {
       throw new Error('Failed to create user profile')

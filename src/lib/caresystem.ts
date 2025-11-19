@@ -4,31 +4,26 @@ import { CareType, CareLog } from '@prisma/client'
 export async function getPetCareStatus(petId: string) {
   const now = new Date()
   
-  // Different time periods for different care types
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
   const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
 
-  // Get logs for different time periods
   const recentLogs = await prisma.careLog.findMany({
     where: {
       petId,
-      at: { gte: yearAgo } // Get logs from past year
+      at: { gte: yearAgo } // 
     },
     orderBy: { at: 'desc' }
   })
 
-  // Filter logs by time periods
   const todayLogs = recentLogs.filter(log => log.at >= today)
   const weekLogs = recentLogs.filter(log => log.at >= weekAgo)
   const monthLogs = recentLogs.filter(log => log.at >= monthAgo)
   const yearLogs = recentLogs.filter(log => log.at >= yearAgo)
 
-  // Calculate mood based on care frequency
   let mood = 3 // Base mood
   
-  // Daily care affects mood more
   const todayFeed = todayLogs.filter(log => log.type === 'FEED').length
   const todayWater = todayLogs.filter(log => log.type === 'WATER').length
   const todayPlay = todayLogs.filter(log => log.type === 'PLAY').length
@@ -97,7 +92,6 @@ export function analyzeCareNeeds(careStatus: any) {
 export async function performCareActivity(petId: string, careType: CareType, amountG?: number, note?: string) {
   const now = new Date()
   
-  // 1. Log the care activity
   const careLog = await prisma.careLog.create({
     data: {
       petId,
@@ -108,7 +102,6 @@ export async function performCareActivity(petId: string, careType: CareType, amo
     }
   })
 
-  // 2. Update mood based on care type
   let moodChange = 0
   switch (careType) {
     case CareType.BRUSH:
@@ -125,7 +118,6 @@ export async function performCareActivity(petId: string, careType: CareType, amo
       break
   }
 
-  // 3. Update or create today's mood log
   if (moodChange > 0) {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     
@@ -150,7 +142,7 @@ export async function performCareActivity(petId: string, careType: CareType, amo
         data: {
           petId,
           date: today,
-          score: Math.min(5, 3 + moodChange), // Start from neutral mood 3
+          score: Math.min(5, 3 + moodChange), 
           note: `Care activity: ${careType}`
         }
       })

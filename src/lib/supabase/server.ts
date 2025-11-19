@@ -23,7 +23,6 @@ export async function createClient() {
   )
 }
 
-// For Server Actions and Route Handlers where you need to modify cookies
 export async function createClientWithCookieAccess() {
   const cookieStore = await cookies()
   

@@ -23,7 +23,6 @@ export default async function Dashboard() {
     return <div>Not authenticated</div>
   }
 
-  // Get user's pets using your existing Pet model
   const pets = await getUserPets(user.id)
   const hasPets = pets.length > 0
 

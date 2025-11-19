@@ -5,8 +5,7 @@ import { useState } from 'react'
 interface PetChatProps {
   petName: string
   petSpecies: string
-  pet: any // Add the full pet object
-}
+  pet: any 
 
 export default function PetChat({ petName, petSpecies, pet }: PetChatProps) {
   const [messages, setMessages] = useState<Array<{role: string, content: string}>>([])

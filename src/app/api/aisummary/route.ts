@@ -51,7 +51,7 @@ feedingFrequencyHours=${feedingFrequency || 'unknown'}
 
     if (!response.ok) {
       const err = await response.text()
-      console.log('❌ Summary model failed:', err)
+      console.log(' Summary model failed:', err)
       throw new Error('Model request failed')
     }
 

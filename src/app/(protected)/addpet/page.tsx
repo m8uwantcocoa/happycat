@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { Species, Sex } from '@prisma/client'
 
 export default function AddPet() {
-  // form state
   const [name, setName] = useState('')
   const [species, setSpecies] = useState<Species>(Species.PERSIAN)
   const [breed, setBreed] = useState('')
@@ -19,7 +18,6 @@ export default function AddPet() {
   const [litterChangeTime, setLitterChangeTime] = useState('')
   const [brushFrequencyPerWeek, setBrushFrequencyPerWeek] = useState('')
 
-  // ui state
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [aiSummary, setAiSummary] = useState('')
@@ -31,7 +29,6 @@ export default function AddPet() {
   const [loadingSpeciesHelp, setLoadingSpeciesHelp] = useState(false)
   const [showPostCreateScreen, setShowPostCreateScreen] = useState(false)
 
-  // validation UI state
   const [weightError, setWeightError] = useState<string | null>(null)
   const [weightWarning, setWeightWarning] = useState<string | null>(null)
   const [birthdateError, setBirthdateError] = useState<string | null>(null)
@@ -44,18 +41,15 @@ export default function AddPet() {
 
   const router = useRouter()
 
-  // ---------------- Validation config ----------------
   const MIN_PLAUSIBLE_KG = 0.3
   const WARNING_KG = 12.0
   const ABSOLUTE_MAX_KG = 25.0
-  const MIN_ALLOWED_YEAR = 1987  // user note said 1995 earlier; keeping your 1987 constant
+  const MIN_ALLOWED_YEAR = 1987  // 
   const ABSOLUTE_MAX_AGE = 38
   const SENIOR_AGE_WARNING = 12
   const MIN_WEEKLY = 1
   const MAX_WEEKLY = 7
-  // ---------------------------------------------------
 
-  // ---------------- VALIDATION HELPERS ----------------
   const validateFeedingTime = (input: HTMLInputElement) => {
     const value = parseInt(input.value)
     const freq = Math.max(1, Math.min(24, parseInt(feedingFrequency) || 1))
@@ -328,11 +322,9 @@ export default function AddPet() {
     }
   }
 
-  // ---------------- FORM SUBMIT ----------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // validate related fields just before submit
     const mealsEl = document.getElementById('feedingTime') as HTMLInputElement | null
     const freqEl = document.getElementById('feedingFrequency') as HTMLInputElement | null
     const brushEl = document.getElementById('brushFrequencyPerWeek') as HTMLInputElement | null
@@ -412,7 +404,6 @@ export default function AddPet() {
     litterError
   )
 
-  // ---------------- POST CREATE SCREEN (unused if navigating immediately) ----------------
   if (showPostCreateScreen) {
     return (
       <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
@@ -436,7 +427,6 @@ export default function AddPet() {
     )
   }
 
-  // ---------------- MAIN FORM ----------------
   return (
     <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
       <div className="max-w-2xl mx-auto">
@@ -499,7 +489,6 @@ export default function AddPet() {
               )}
             </div>
 
-            {/* SPECIES + AI HELP */}
             <div>
               <div className="flex justify-between mb-2">
                 <label htmlFor="species" className="text-sm font-medium text-gray-700">
@@ -529,7 +518,6 @@ export default function AddPet() {
               {aiSpeciesHelp && <p className="text-xs text-gray-600 mt-2">{aiSpeciesHelp}</p>}
             </div>
 
-            {/* BREED */}
             <div>
               <label htmlFor="breed" className="text-sm font-medium text-gray-700 mb-2 block">
                 Specific Breed <span className="text-gray-500 text-xs">(optional)</span>
@@ -544,7 +532,6 @@ export default function AddPet() {
               />
             </div>
 
-            {/* SEX */}
             <div>
               <label htmlFor="sex" className="text-sm font-medium text-gray-700 mb-2 block">
                 Sex
@@ -561,7 +548,6 @@ export default function AddPet() {
               </select>
             </div>
 
-            {/* BIRTHDATE */}
             <div>
               <label htmlFor="birthdate" className="text-sm font-medium text-gray-700 mb-2 block">
                 Birthday <span className="text-gray-500 text-xs">(optional)</span>
@@ -582,7 +568,6 @@ export default function AddPet() {
               {!birthdateError && birthdateWarning && <p className="text-xs text-yellow-700 mt-1">{birthdateWarning}</p>}
             </div>
 
-            {/* WEIGHT */}
             <div>
               <label htmlFor="weightKg" className="text-sm font-medium text-gray-700 mb-2 block">
                 Weight (kg) <span className="text-gray-500 text-xs">(optional)</span>
@@ -607,7 +592,6 @@ export default function AddPet() {
               </p>
             </div>
 
-            {/* NEUTERED */}
             <div>
               <div className="flex items-center">
                 <input
@@ -623,7 +607,6 @@ export default function AddPet() {
               </div>
             </div>
 
-            {/* FEEDING SCHEDULE */}
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
               <h3 className="text-sm font-medium text-orange-900 mb-3">Feeding Schedule</h3>
 
@@ -680,7 +663,6 @@ export default function AddPet() {
               </div>
             </div>
 
-            {/* CARE ROUTINE */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h3 className="text-sm font-medium text-green-900 mb-3">Care Routine</h3>
 
@@ -727,7 +709,6 @@ export default function AddPet() {
               </div>
             </div>
 
-            {/* CARE PLAN REVIEW */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <p className="text-sm font-medium text-blue-900">Care plan review</p>
@@ -744,7 +725,6 @@ export default function AddPet() {
               )}
             </div>
 
-            {/* AI SUMMARY PREVIEW */}
             <div className="mb-4">
               <button
                 type="button"
@@ -756,14 +736,12 @@ export default function AddPet() {
               {aiSummary && <p className="text-sm text-gray-700 mt-2">{aiSummary}</p>}
             </div>
 
-            {/* ERROR MESSAGE */}
             {message && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
                 {message}
               </div>
             )}
 
-            {/* SUBMIT */}
             <div className="flex gap-4">
               <button
                 type="submit"

@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
       feedingTime, feedingFrequency, brushFrequencyPerWeek, litterChangeTime
     } = await req.json()
 
-    // Add immediate validation before even calling AI
     const meals = parseInt(feedingTime)
     const hours = parseInt(feedingFrequency)
     const brushing = parseInt(brushFrequencyPerWeek || 0)
@@ -71,7 +70,7 @@ Keep under 100 words.`
         model: 'meta-llama/llama-3.2-3b-instruct:free',
         messages: [{ role: 'system', content: systemPrompt }],
         max_tokens: 120,
-        temperature: 0.1, // Very low for consistent, logical responses
+        temperature: 0.1, 
       }),
     })
 

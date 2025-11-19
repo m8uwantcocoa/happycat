@@ -59,9 +59,6 @@ enum CareType {
   PLAY
 }
 
-// ---- Models ----
-// Mirrors auth.users (UUID). We don't let Prisma manage auth schema.
-// Option A: Add a FOREIGN KEY to auth.users.id later in SQL (optional).
 model Profile {
   id        String  @id @db.Uuid // same as auth.users.id
   locale    String? // e.g., "sv-SE"
@@ -72,7 +69,6 @@ model Profile {
   nudges    Nudge[]
 }
 
-// A pet belongs to one user (Profile)
 model Pet {
   id         String   @id @default(cuid())
   userId     String   @db.Uuid
@@ -98,7 +94,6 @@ model Pet {
   @@index([userId])
 }
 
-// What to do & how often
 model CarePlan {
   id           String   @id @default(cuid())
   petId        String
@@ -116,7 +111,6 @@ model CarePlan {
   @@index([petId, type])
 }
 
-// Actual log entries
 model CareLog {
   id         String    @id @default(cuid())
   petId      String
@@ -130,7 +124,6 @@ model CareLog {
   @@index([petId, type, at])
 }
 
-// Optional: named vaccine plans (if you want per-vaccine names)
 model Vaccine {
   id        String   @id @default(cuid())
   petId     String
@@ -156,7 +149,6 @@ model MoodLog {
   @@index([petId, date])
 }
 
-// Cached AI copy pack per user (Consistency & Standards)
 model UICopy {
   userId     String   @id @db.Uuid
   json       Json
@@ -165,7 +157,6 @@ model UICopy {
   user       Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Optional: store nudges shown/applied (Flexibility & Efficiency)
 model Nudge {
   id        String   @id @default(cuid())
   userId    String   @db.Uuid

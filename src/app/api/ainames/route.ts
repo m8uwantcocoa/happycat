@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     for (const model of freeModels) {
       try {
-        console.log(`🧠 Trying model: ${model}`)
+        console.log(` Trying model: ${model}`)
 
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
@@ -50,15 +50,15 @@ Return only the names separated by commas, no numbers or text.`,
             data.choices?.[0]?.message?.content ||
             'Luna, Bella, Nala, Oliver, Milo'
 
-          console.log(`✅ Success with model: ${model}`)
+          console.log(` Success with model: ${model}`)
           return NextResponse.json({ names, modelUsed: model })
         } else {
           const errorText = await response.text()
-          console.warn(`❌ Model ${model} failed: ${response.status} - ${errorText}`)
+          console.warn(` Model ${model} failed: ${response.status} - ${errorText}`)
           continue
         }
       } catch (modelErr) {
-        console.warn(`❌ Model ${model} error:`, modelErr)
+        console.warn(` Model ${model} error:`, modelErr)
         continue
       }
     }
@@ -74,7 +74,7 @@ Return only the names separated by commas, no numbers or text.`,
 
     return NextResponse.json({ names: fallback, modelUsed: 'fallback' })
   } catch (err) {
-    console.error('❌ AI names route error:', err)
+    console.error(' AI names route error:', err)
 
     const defaultNames = 'Luna, Bella, Nala, Oliver, Milo'
     return NextResponse.json({ names: defaultNames, modelUsed: 'error-fallback' })

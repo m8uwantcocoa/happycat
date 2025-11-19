@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HappyCat
 
-## Getting Started
+Small pet-care web app built with Next.js, Supabase, Prisma and AI helpers (OpenAI / OpenRouter). This README explains how to get the project running locally and covers common troubleshooting.
 
-First, run the development server:
+## Features
+- User auth via Supabase
+- Pet management (CRUD)
+- Care tracking and reminders
+- AI utilities: name suggestions, care summaries, chat helpers
+- Prisma-powered database access (local / Supabase Postgres)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Prerequisites
+- Node.js 18+ (or the version specified in engines)
+- npm, pnpm or yarn
+- A Supabase project (URL + anon key)
+- An OpenAI or OpenRouter API key (optional for AI features)
+- Git (recommended)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick start (local)
+1. Clone repo
+   - git clone <repo-url>
+   - cd happycat
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Install deps
+   - npm install
+   - (or `pnpm install` / `yarn`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Create environment file
+   - Copy and populate `.env.local` with your keys (see example below).
+   - Do NOT commit `.env.local`.
 
-## Learn More
+4. Prisma (if schema changed / first-time)
+   - Generate client:
+     - npx prisma generate
+   - Push schema to DB (for development):
+     - npx prisma db push
+   - If using migrations: npx prisma migrate dev
 
-To learn more about Next.js, take a look at the following resources:
+5. Start dev server
+   - npm run dev
+   - Open http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+6. Restart dev server after changing environment variables.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Required environment variables
+Create `f:\Sys_Books\happycat\.env.local` (example):
 
-## Deploy on Vercel
+```env
+# filepath: [.env.local](http://_vscodecontentref_/0)
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here   # optional for server tasks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Database (if using Prisma direct DB connection)
+DATABASE_URL="postgresql://user:password@host:port/dbname"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# AI keys (optional)
+OPENAI_API_KEY=sk-xxxxxxxx
+OPENROUTER_API_KEY=sk-or-xxxxxxxx

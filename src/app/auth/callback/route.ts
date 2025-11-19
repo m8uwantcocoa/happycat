@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient()
     
-    // Use exchangeCodeForSession method correctly
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (error) {
@@ -17,7 +16,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Redirect to dashboard on success, or home if no code
   const redirectUrl = code ? '/dashboard' : '/'
   return NextResponse.redirect(new URL(redirectUrl, request.url))
 }

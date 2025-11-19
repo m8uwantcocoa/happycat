@@ -22,7 +22,6 @@ interface PageProps {
   params: { id: string }
 }
 
-// helper: urgent need
 function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
   const needs = careNeeds.needs || {}
   const counts = careNeeds.counts || {}
@@ -99,7 +98,6 @@ export default async function PetDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
       <div className="max-w-2xl mx-auto pt-2">
         <div className="bg-white rounded-xl shadow-lg p-8">
-          {/* Header buttons */}
           <div className="mb-6 flex justify-between items-center">
             <Link
               href="/dashboard"
@@ -142,7 +140,6 @@ export default async function PetDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          {/* Pet details */}
           <div className="bg-gradient-to-br from-orange-50 to-pink-50 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Pet Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">

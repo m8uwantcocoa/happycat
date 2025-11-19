@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
-    // Create a comprehensive system message with pet info
     const systemPrompt = `You are HappyCat AI, built into the HappyCat pet care app. 
 
 Current pet: ${petName || 'cat'} (${petSpecies || 'domestic cat'})
@@ -52,11 +51,11 @@ Stay in character as the HappyCat app assistant.`
             model: model,
             messages: [
               { role: "system", content: systemPrompt },
-              ...conversation.slice(-2), // Only last 2 messages to reduce tokens
+              ...conversation.slice(-2), // 
               { role: "user", content: message }
             ],
             temperature: 0.7,
-            max_tokens: 200, // Keep it small for free tier
+            max_tokens: 200, // 
           })
         })
 
@@ -73,15 +72,15 @@ Stay in character as the HappyCat app assistant.`
               { role: "user", content: message },
               { role: "assistant", content: aiResponse }
             ],
-            modelUsed: model // So you know which one worked
+            modelUsed: model // 
           })
         } else {
           const errorText = await response.text()
-          console.log(`❌ Model ${model} failed: ${response.status} - ${errorText}`)
+          console.log(` Model ${model} failed: ${response.status} - ${errorText}`)
           continue // Try next model
         }
       } catch (modelError) {
-        console.log(`❌ Model ${model} error:`, modelError.message)
+        console.log(` Model ${model} error:`, modelError.message)
         continue // Try next model
       }
     }
@@ -114,7 +113,6 @@ Stay in character as the HappyCat app assistant.`
   }
 }
 
-// Updated fallback function with pet info
 function getCatAdvice(message: string, petName?: string, petSpecies?: string): string {
   const lowerMessage = message.toLowerCase()
   const name = petName || 'your cat'
