@@ -2,6 +2,13 @@ import { prisma } from '@/lib/prisma'
 import type { Pet, CreatePetData } from '@/types/pet'
 import { Species, Sex } from '@prisma/client'
 
+// Hjälpfunktion för att fixa decimal-problemet på en enskild katt
+function normalizePet(pet: any): Pet {
+  return {
+    ...pet,
+    weightKg: pet.weightKg ? pet.weightKg.toNumber() : null
+  }
+}
 
 async function ensureUserProfile(userId: string) {
   try {
@@ -13,7 +20,6 @@ async function ensureUserProfile(userId: string) {
       profile = await prisma.profile.create({
         data: {
           id: userId,
-          
         }
       })
     }
@@ -35,7 +41,10 @@ export async function getUserPets(userId: string): Promise<Pet[]> {
         createdAt: 'desc'
       }
     })
-    return pets
+    
+    // HÄR ÄR FIXEN: Vi mappar över alla katter och gör om Decimal -> Number
+    return pets.map(pet => normalizePet(pet))
+
   } catch (error) {
     console.error('Error fetching user pets:', error)
     return []
@@ -55,7 +64,9 @@ export async function createPet(userId: string, petData: CreatePetData): Promise
         userId: userId
       }
     })
-    return pet
+
+    return normalizePet(pet)
+
   } catch (error) {
     console.error('Error creating pet:', error)
     return null

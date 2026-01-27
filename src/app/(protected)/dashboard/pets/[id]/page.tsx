@@ -205,7 +205,7 @@ export default async function PetDetailPage({ params }: PageProps) {
               {pet.weightKg ? (
                 <div>
                   <span className="font-medium text-gray-700">Weight:</span>
-                  <p className="text-gray-900">{pet.weightKg}kg</p>
+                  <p className="text-gray-900">{pet.weightKg.toString()}kg</p>
                 </div>
               ) : (
                 <div><span className="font-medium text-gray-700">Weight:</span>
