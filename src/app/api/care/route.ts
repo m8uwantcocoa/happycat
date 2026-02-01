@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClientAccess } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { performCareActivity } from '@/lib/caresystem'
 import { prisma } from '@/lib/prisma'
 import { CareType } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClientAccess()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
