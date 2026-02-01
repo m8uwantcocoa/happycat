@@ -42,7 +42,6 @@ export async function getUserPets(userId: string): Promise<Pet[]> {
       }
     })
     
-    // HÄR ÄR FIXEN: Vi mappar över alla katter och gör om Decimal -> Number
     return pets.map(pet => normalizePet(pet))
 
   } catch (error) {
