@@ -7,7 +7,13 @@ function getSpeciesImage(species: string): string {
     'RAGDOLL': '/ragdoll.png',
     'SIAMESE': '/siamese.png',
     'BRITISH_SHORTHAIR': '/britishshort.png',
-    'PERSIAN': '/persian.png'
+    'PERSIAN': '/persian.png',
+  'SCOTTISH_FOLD': '/scottishfold.png',
+    'SPHYNX': '/sphynx.png',
+    'RUSSIAN_BLUE': '/russianblue.png',
+    'BIRMAN': '/birman.png',
+    'BENGAL': '/bengal.png',
+    'ORANGE_TABBY': '/tabbyorange.png',
   }
   
   return imageMap[species] || '/ragdoll.png' 
@@ -80,8 +86,8 @@ export default async function Dashboard() {
                       />
                     </div>                  
                     <div className="space-y-2 text-sm text-gray-600">
-                      <p><strong>Species:</strong> {formatSpeciesName(pet.species)}</p>
-                      {pet.breed && <p><strong>Breed:</strong> {pet.breed}</p>}
+                      <p><strong>Breed:</strong> {formatSpeciesName(pet.species)}</p>
+                      {pet.breed && <p><strong>Mixed with:</strong> {pet.breed}</p>}
                       <p><strong>Sex:</strong> {pet.sex}</p>
                       {pet.birthdate && (
                         <p><strong>Birthday:</strong> {new Date(pet.birthdate).toLocaleDateString()}</p>

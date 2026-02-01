@@ -182,7 +182,7 @@ export default function AddPet() {
             {/* SPECIES - Using Hardcoded Strings now */}
             <div>
               <label htmlFor="species" className="block text-sm font-medium text-gray-700 mb-2">
-                Species *
+                Breed *
               </label>
               <select
                 id="species"
@@ -195,13 +195,19 @@ export default function AddPet() {
                 <option value="SIAMESE">Siamese</option>
                 <option value="BRITISH_SHORTHAIR">British Shorthair</option>
                 <option value="PERSIAN">Persian</option>
+                <option value="SCOTTISH_FOLD">Scottish Fold</option>
+                <option value="SPHYNX">Sphynx</option>
+                <option value="RUSSIAN_BLUE">Russian Blue</option>
+                <option value="BIRMAN">Birman</option>
+                <option value="BENGAL">Bengal</option>
+                <option value="ORANGE_TABBY">Orange Housecat</option>
               </select>
             </div>
 
             {/* BREED */}
             <div>
               <label htmlFor="breed" className="block text-sm font-medium text-gray-700 mb-2">
-                Breed (optional)
+                Mixed? (optional)
               </label>
               <input
                 type="text"

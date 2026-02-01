@@ -5,22 +5,29 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPetCareStatus, analyzeCareNeeds } from '@/lib/caresystem'
 import CareTracker from './components/caretracker'
+import DeletePetButton from './components/deletebutton'
 
 function getSpeciesImage(species: string): string {
   const imageMap: { [key: string]: string } = {
     'RAGDOLL': '/ragdoll.png',
     'SIAMESE': '/siamese.png',
     'BRITISH_SHORTHAIR': '/britishshort.png',
-    'PERSIAN': '/persian.png'
+    'PERSIAN': '/persian.png',
+  'SCOTTISH_FOLD': '/scottishfold.png',
+    'SPHYNX': '/sphynx.png',
+    'RUSSIAN_BLUE': '/russianblue.png',
+    'BIRMAN': '/birman.png',
+    'BENGAL': '/bengal.png',
+    'ORANGE_TABBY': '/tabbyorange.png',
   }
   
   return imageMap[species] || '/ragdoll.png'
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
@@ -94,7 +101,9 @@ function getUrgentNeed(careNeeds: any, careStatus: any, pet: any) {
   return null
 }
 
-export default async function PetDetailPage({ params }: PageProps) {
+export default async function PetDetailPage(props: PageProps) {
+  const params = await props.params;
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -104,8 +113,8 @@ export default async function PetDetailPage({ params }: PageProps) {
 
   const pet = await prisma.pet.findFirst({
     where: {
-      id: params.id,
-      userId: user.id // 
+      id: params.id, // Using the awaited ID
+      userId: user.id 
     }
   })
 
@@ -115,7 +124,7 @@ export default async function PetDetailPage({ params }: PageProps) {
 
   const careStatus = await getPetCareStatus(pet.id)
   const careNeeds = analyzeCareNeeds(careStatus)
-  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet) // 
+  const urgentNeed = getUrgentNeed(careNeeds, careStatus, pet)
 
   return (
     <div className="min-h-screen bg-[url('/happycat-background.png')] bg-cover bg-center bg-no-repeat relative p-6">
@@ -124,23 +133,16 @@ export default async function PetDetailPage({ params }: PageProps) {
           <div className="mb-6 flex justify-between items-center">
             <Link 
               href="/dashboard"
-              className="font-bold  text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
+              className="text-sm bg-blue-400 hover:bg-blue-300 text-white font-bold py-2 px-4 border-b-4 border-blue-600 hover:border-blue-400 rounded"
             >
               ← Back
             </Link>
-            <button
-              className="font-bold ml-3 text-sm bg-gray-400 hover:bg-gray-300 text-white font-bold py-2 px-4 border-b-4 border-gray-600 hover:border-gray-400 rounded"
-            >
-              Edit
-            </button>
-            <button
-              className="font-bold  text-sm bg-red-400 hover:bg-red-300 text-white font-bold py-2 px-4 border-b-4 border-red-600 hover:border-red-400 rounded"
-            >
-              Delete Cat
-            </button>
+            <div className="flex gap-2">                
+                <DeletePetButton petId={pet.id} />
+            </div>
           </div>
           
-          {/* Pet  image */}
+          {/* Pet Image */}
           <div className="text-center mb-8">
             {urgentNeed && (
               <div className={`w-14 h-14 mr-55 mx-auto mb-2 animate-pulse hover:animate-bounce rounded-full overflow-hidden shadow-lg ${urgentNeed.color} flex items-center justify-center relative`}>
@@ -173,7 +175,7 @@ export default async function PetDetailPage({ params }: PageProps) {
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Pet Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <div>
-                <span className="font-medium text-gray-700">Species:</span>
+                <span className="font-medium text-gray-700">Breed:</span>
                 <p className="text-gray-900">{formatSpeciesName(pet.species)}</p>
               </div>
 
@@ -194,12 +196,12 @@ export default async function PetDetailPage({ params }: PageProps) {
 
               {pet.breed ? (
                 <div>
-                  <span className="font-medium text-gray-700">Breed:</span>
+                  <span className="font-medium text-gray-700">Mixed:</span>
                   <p className="text-gray-900">{pet.breed}</p>
                 </div>
               ) : (
-                <div><span className="font-medium text-gray-700">Breed:</span>
-                  <p className="text-gray-900">UNKNOWN</p></div>
+                <div><span className="font-semibold text-gray-700">Pure breed</span>
+                  <p className="text-gray-900"></p></div>
               )}
 
               {pet.weightKg ? (
