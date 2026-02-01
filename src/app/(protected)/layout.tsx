@@ -1,13 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient() // Add 'await' here!
-  const { data: { session } } = await supabase.auth.getSession()
-  
-  if (!session) {
-    redirect('/login')
-  }
-  
-  return <>{children}</>
+  // We initialize the client here just to keep the session alive (refresh tokens),
+  // but we do NOT perform a check or redirect.
+  // The Middleware has already verified the user is logged in.
+  const supabase = await createClient()
+
+  return (
+    <>
+      {children}
+    </>
+  )
 }
