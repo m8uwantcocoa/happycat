@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
-export async function POST(req: NextRequest) {
+async function signOut(req: NextRequest) {
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
@@ -10,14 +10,16 @@ export async function POST(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options, maxAge: 0 })
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => 
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+          }
         },
       },
     }
@@ -34,4 +36,12 @@ export async function POST(req: NextRequest) {
   return NextResponse.redirect(new URL('/login', req.url), {
     status: 302,
   })
+}
+
+export async function POST(request: NextRequest) {
+  return signOut(request)
+}
+
+export async function GET(request: NextRequest) {
+  return signOut(request)
 }
