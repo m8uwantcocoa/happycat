@@ -1,11 +1,11 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClientWithCookieAccess } from '@/lib/supabase/server'
 import { createPet } from '@/lib/pets'
 import { NextRequest, NextResponse } from 'next/server'
 import { Species, Sex } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = await createClientWithCookieAccess()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
