@@ -60,7 +60,7 @@ export default function LoginPage() {
               
               <Link 
                 href="/"
-                  className="inline-block px-3 py-3 text-sm font-bold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="font-bold  text-sm bg-green-400 hover:bg-green-300 text-white font-bold py-2 px-4 border-b-4 border-green-600 hover:border-green-400 rounded"
 
               >
                 Sign up now! 

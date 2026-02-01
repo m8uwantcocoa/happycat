@@ -33,7 +33,7 @@ async function signOut(req: NextRequest) {
     await supabase.auth.signOut()
   }
 
-  return NextResponse.redirect(new URL('/login', req.url), {
+  return NextResponse.redirect(new URL('/landing', req.url), {
     status: 302,
   })
 }
