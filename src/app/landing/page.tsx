@@ -31,7 +31,7 @@ export default async function Home() {
             </div>
           </div>
           <p className="mt-2 text-sm text-gray-100 drop-shadow-sm">
-            Keep your furry friends happy and healthy
+            The purr-fect virtual cat companion
           </p>
         </div>
         
