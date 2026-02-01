@@ -49,7 +49,7 @@ export default async function Dashboard() {
             <Link 
               href="/auth/signout" 
               prefetch={false}
-              className="hover:animate-pulse focus:animate-ping inline-block px-4 py-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
+              className="hover:animate-pulse  inline-block px-4 py-2 bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 border-b-4 border-red-700 hover:border-red-500 rounded"
             >
               Logout
             </Link>
@@ -63,7 +63,7 @@ export default async function Dashboard() {
                 </h2>
                 <Link 
                   href="/addpet"
-                  className="px-6 py-2 bg-blue-500 hover:animte-pulse focus:animate-ping hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                  className="px-6 py-2 bg-blue-500 hover:animte-pulse  hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
                 >
                   Add Cat 
                 </Link>
@@ -99,7 +99,7 @@ export default async function Dashboard() {
                     
                     <Link 
                       href={`/dashboard/pets/${pet.id}`}
-                      className="mt-4 hover:animate-pulse focus:animate-ping inline-block px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                      className="mt-4 hover:animate-pulse  inline-block px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
                     >
                       Select Cat
                     </Link>
