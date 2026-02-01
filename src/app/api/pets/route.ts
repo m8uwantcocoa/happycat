@@ -1,11 +1,12 @@
-import { createClientWithCookieAccess } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server' 
 import { createPet } from '@/lib/pets'
 import { NextRequest, NextResponse } from 'next/server'
 import { Species, Sex } from '@prisma/client'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClientWithCookieAccess()
+    const supabase = await createClient()
+    
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -13,13 +14,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, species, breed, sex, birthdate, weightKg, neutered,feedingFrequency,feedingTime } = body
+    const { name, species, breed, sex, birthdate, weightKg, neutered, feedingFrequency, feedingTime } = body
 
     if (!name || !species) {
       return NextResponse.json({ error: 'Pet name and species are required' }, { status: 400 })
     }
-    
-    
 
     const pet = await createPet(user.id, {
       name,
@@ -29,8 +28,8 @@ export async function POST(request: NextRequest) {
       birthdate: birthdate ? new Date(birthdate) : undefined,
       weightKg,
       neutered: neutered || false,
-        feedingTime: feedingTime ? parseInt(feedingTime) : undefined,
-  feedingFrequency: feedingFrequency ? parseInt(feedingFrequency) : undefined
+      feedingTime: feedingTime ? parseInt(feedingTime) : undefined,
+      feedingFrequency: feedingFrequency ? parseInt(feedingFrequency) : undefined
     }) 
 
     if (!pet) {
