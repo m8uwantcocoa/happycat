@@ -69,16 +69,17 @@ export default async function Dashboard() {
                 </Link>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {pets.map((pet) => (
                   <div 
                     key={pet.id} 
-                    className="bg-gradient-to-br from-orange-100 to-pink-100 rounded-xl p-6 shadow-md"
+                    className="bg-gradient-to-br hover:-translate-y-2 hover:scale-[1.03] hover:shadow-xl transition-all duration-300 
+                    from-orange-100 to-pink-100 rounded-xl p-6 shadow-md"
                   >
                     <h3 className="text-xl font-bold text-gray-800 mb-2">
                       {pet.name} 🐾
                     </h3>
-                    <div className="w-16 h-16 mb-4 rounded-lg overflow-hidden shadow-md bg-gray-100 flex items-center justify-center">
+                    <div className="w-16 h-16 mb-4 rounded-lg overflow-hidden  shadow-md bg-gray-100 flex items-center justify-center">
                       <img
                         src={getSpeciesImage(pet.species)}
                         alt={`${formatSpeciesName(pet.species)} cat`}
