@@ -114,9 +114,7 @@ const handleKeyPress = (e: React.KeyboardEvent) => {
               </div>
             </div>
             <div className='flex items-center text-center '>
-              <button type="button" className="text-sm text-blue-600 hover:text-blue-500 font-medium" onClick={() => router.push('/reset-password')}>
-                Did you forget your password?{' '}
-              </button>
+              
                 
             </div>
 
