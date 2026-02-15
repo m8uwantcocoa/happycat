@@ -66,6 +66,12 @@ className="w-full flex justify-center font-bold text-sm text-white bg-gradient-t
               >
                 <span className="font-bold text-green-800">What is HappyCat? ℹ️</span>
               </Link>
+              <Link
+                href="/guest"
+className="w-full flex justify-center font-bold text-sm text-white bg-gradient-to-l from-purple-300 via-purple-400 to-purple-300 py-2 px-4 rounded-md border-b-4 border-purple-600 shadow-sm hover:brightness-110 hover:border-purple-400 active:translate-y-[2px] transition-all duration-150"
+              >
+                <span className="font-bold text-purple-800">Try out guest mode!</span>
+              </Link>
             </div>
           )}
         </div>
