@@ -7,7 +7,7 @@ import { getPetCareStatus, analyzeCareNeeds } from '@/lib/caresystem'
 import CareTracker from './components/caretracker'
 import DeletePetButton from './components/deletebutton'
 
-function getSpeciesImage(species: string): string {
+function getSpeciesImage(species: string): string { // Map of species to image paths
   const imageMap: { [key: string]: string } = {
     'RAGDOLL': '/ragdoll.png',
     'SIAMESE': '/siamese.png',
