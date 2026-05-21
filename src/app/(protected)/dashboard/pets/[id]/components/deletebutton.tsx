@@ -19,7 +19,7 @@ export default function DeletePetButton({ petId }: { petId: string }) {
       })
 
       if (response.ok) {
-        router.refresh() // Refresh cache
+        router.refresh() // Refresh cache - IMPORTANT
         router.push('/dashboard') // Go back to dashboard
       } else {
         alert('Failed to delete pet. Please try again.')
